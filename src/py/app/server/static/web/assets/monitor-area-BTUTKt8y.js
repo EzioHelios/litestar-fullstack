@@ -1,0 +1,1 @@
+import{j as o}from"./main-DvZilNiI.js";import{P as r}from"./placeholder-page-a4yqVaOH.js";/* empty css               */function i(){return o.jsx(r,{eyebrow:"数据管理",title:"监测区域"})}export{i as component};

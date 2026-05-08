@@ -1,0 +1,122 @@
+"""
+碳核算引擎：活动量 × 排放因子 = CO₂e 排放量（参考 xtck_deploy dataapp/services/emission_calculator.py）
+"""
+from __future__ import annotations
+
+import logging
+from decimal import Decimal
+from typing import Any
+
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.domain.carbon.models import EmissionFactor
+
+logger = logging.getLogger(__name__)
+
+
+async def calc_co2e(
+    session: AsyncSession,
+    scope: str,
+    category: str,
+    sub_category: str,
+    activity_amount: float | Decimal | int,
+    unit: str,
+    year: int | None = None,
+) -> Decimal | None:
+    """
+    查询排放因子库并计算 CO₂e 排放量。
+
+    Args:
+        session: 数据库会话
+        scope: scope1 / scope2 / scope3
+        category: fuel / electricity / refrigerant / waste / transport
+        sub_category: 与模型枚举一致，如 diesel_0 / R22 / waste_paper
+        activity_amount: 活动量数值
+        unit: 活动量单位，如 L / kg / kWh / t
+        year: 数据年份，默认取因子库最新年份
+
+    Returns:
+        CO₂e 数值（kg），未找到因子时返回 None
+    """
+    stmt = (
+        select(EmissionFactor)
+        .where(
+            EmissionFactor.scope == scope,
+            EmissionFactor.category == category,
+            EmissionFactor.sub_category == sub_category,
+            EmissionFactor.unit == unit,
+            EmissionFactor.is_active == True,
+        )
+    )
+    if year is not None:
+        stmt = stmt.where(EmissionFactor.year == year)
+    else:
+        stmt = stmt.order_by(EmissionFactor.year.desc())
+    result = await session.execute(stmt)
+    factor = result.scalars().first()
+    if factor is None:
+        logger.warning(
+            "未找到排放因子: scope=%s category=%s sub_category=%s unit=%s year=%s",
+            scope, category, sub_category, unit, year,
+        )
+        return None
+    amount = Decimal(str(activity_amount))
+    co2e = amount * factor.factor_value
+    logger.info(
+        "碳核算: %s%s × %s %s = %s kgCO₂e [%s]",
+        activity_amount, unit, factor.factor_value, factor.factor_unit, co2e, factor.source,
+    )
+    return co2e
+
+
+async def calc_scope1_fuel(
+    session: AsyncSession,
+    fuel_type: str,
+    amount: float | Decimal,
+    unit: str,
+    year: int | None = None,
+) -> Decimal | None:
+    """Scope 1：燃料燃烧"""
+    return await calc_co2e(session, "scope1", "fuel", fuel_type, amount, unit, year)
+
+
+async def calc_scope1_refrigerant(
+    session: AsyncSession,
+    refrigerant_type: str,
+    amount_kg: float | Decimal,
+    year: int | None = None,
+) -> Decimal | None:
+    """Scope 1：制冷剂逸散"""
+    return await calc_co2e(session, "scope1", "refrigerant", refrigerant_type, amount_kg, "kg", year)
+
+
+async def calc_scope2_electricity(
+    session: AsyncSession,
+    kwh: float | Decimal,
+    year: int | None = None,
+) -> Decimal | None:
+    """Scope 2：网购电力"""
+    return await calc_co2e(session, "scope2", "electricity", "grid_electricity", kwh, "kWh", year)
+
+
+async def calc_scope3_waste(
+    session: AsyncSession,
+    waste_category: str,
+    weight_ton: float | Decimal,
+    year: int | None = None,
+) -> Decimal | None:
+    """Scope 3：废弃物"""
+    return await calc_co2e(session, "scope3", "waste", waste_category, weight_ton, "t", year)
+
+
+async def calc_scope3_transport(
+    session: AsyncSession,
+    vehicle_type: str,
+    distance_km: float | Decimal,
+    load_ton: float | Decimal,
+    year: int | None = None,
+) -> Decimal | None:
+    """Scope 3：外购运输（吨公里法）"""
+    ton_km = Decimal(str(distance_km)) * Decimal(str(load_ton))
+    return await calc_co2e(session, "scope3", "transport", vehicle_type, ton_km, "t·km", year)

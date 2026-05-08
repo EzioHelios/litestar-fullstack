@@ -1,0 +1,161 @@
+import { useQuery } from "@tanstack/react-query"
+import { useRouterState } from "@tanstack/react-router"
+import { Activity, AlarmClock, Building2, Camera, Database, HardDrive, Home, KeyRound, MapPinned, PlugZap, ShieldCheck, Truck, Users, Video, Warehouse } from "lucide-react"
+import type * as React from "react"
+import { useEffect, useMemo } from "react"
+import { NavMain } from "@/components/nav-main"
+import { NavProjects } from "@/components/nav-projects"
+import { NavUser } from "@/components/nav-user"
+import { TeamSwitcher } from "@/components/team-switcher"
+import { ThemeToggle } from "@/components/theme-toggle"
+import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@/components/ui/sidebar"
+import { useAuthStore } from "@/lib/auth"
+import { listTeams, type Team } from "@/lib/generated/api"
+
+export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const { teams, currentTeam, setTeams, setCurrentTeam, user, isAuthenticated } = useAuthStore()
+  const pathname = useRouterState({ select: (s) => s.location.pathname })
+
+  const {
+    data: teamsData = [],
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["teams"],
+    queryFn: async () => {
+      const response = await listTeams()
+      return response.data?.items ?? []
+    },
+    enabled: isAuthenticated,
+  })
+
+  const teamIds = useMemo(() => teamsData.map((team) => team.id).join("|"), [teamsData])
+  const storeIds = useMemo(() => teams.map((team) => team.id).join("|"), [teams])
+
+  useEffect(() => {
+    if (isLoading || isError || teamIds === storeIds) {
+      return
+    }
+    setTeams(teamsData)
+  }, [isError, isLoading, setTeams, storeIds, teamIds, teamsData])
+
+  const navMain = useMemo(() => {
+    const items = [
+      {
+        title: "首页",
+        to: "/platform",
+        icon: Home,
+      },
+      {
+        title: "权限管理",
+        to: "/auth/users",
+        icon: Users,
+        isActive: pathname.startsWith("/auth"),
+        items: [
+          { title: "用户管理", to: "/auth/users" },
+          { title: "角色管理", to: "/auth/roles" },
+        ],
+      },
+      {
+        title: "数据管理",
+        to: "/data/company",
+        icon: Database,
+        isActive: pathname.startsWith("/data"),
+        items: [
+          { title: "企业基本信息", to: "/data/company" },
+          { title: "员工通勤", to: "/data/commute" },
+          { title: "监测区域", to: "/data/monitor-area" },
+          { title: "入库管理", to: "/data/inbound" },
+          { title: "出库管理", to: "/data/outbound" },
+          { title: "监控终端", to: "/data/terminals" },
+          { title: "电表电量", to: "/data/meter" },
+          { title: "视频监控", to: "/data/video" },
+          { title: "预警规则", to: "/data/alarm-rules" },
+          { title: "预警事件", to: "/data/alarm-events" },
+          { title: "视频监控预警事件", to: "/data/video-alarm-events" },
+          { title: "储能数值设置", to: "/data/energy-storage" },
+          { title: "接口结果key映射", to: "/data/api-key-mapping" },
+        ],
+      },
+      {
+        title: "碳排放管理",
+        to: "/carbon-mgmt/scope1-mobile",
+        icon: ShieldCheck,
+        isActive: pathname.startsWith("/carbon-mgmt") || pathname.startsWith("/carbon"),
+        items: [
+          { title: "[Scope1] 移动源燃烧", to: "/carbon-mgmt/scope1-mobile" },
+          { title: "[Scope1] 固定源燃烧", to: "/carbon-mgmt/scope1-stationary" },
+          { title: "[Scope1] 制冷剂逸散", to: "/carbon-mgmt/scope1-refrigerant" },
+          { title: "[Scope2] 电费账单", to: "/carbon-mgmt/scope2-bill" },
+          { title: "[Scope3] 废弃物处理", to: "/carbon-mgmt/scope3-waste" },
+          { title: "[Scope3] 外购运输", to: "/carbon-mgmt/scope3-transport" },
+          { title: "排放因子库", to: "/carbon-mgmt/factors" },
+          { title: "IoT时序数据", to: "/carbon-mgmt/iot" },
+          { title: "审核操作日志", to: "/carbon-mgmt/audit" },
+        ],
+      },
+      {
+        title: "定时任务",
+        to: "/tasks/interval",
+        icon: AlarmClock,
+        isActive: pathname.startsWith("/tasks"),
+        items: [
+          { title: "时间间隔设置", to: "/tasks/interval" },
+          { title: "crontab设置", to: "/tasks/crontab" },
+          { title: "定时任务设置", to: "/tasks/schedules" },
+        ],
+      },
+    ]
+
+    if (user?.isSuperuser) {
+      const auth = items.find((i) => i.title === "权限管理")
+      auth?.items?.push({ title: "后台管理", to: "/admin" })
+    }
+
+    return items
+  }, [pathname, user?.isSuperuser])
+
+  const teamLinks = useMemo(
+    () =>
+      teams.map((team: Team) => ({
+        name: team.name,
+        to: "/teams/$teamId",
+        params: { teamId: team.id },
+        icon: Users,
+      })),
+    [teams],
+  )
+  const teamOptions = teamsData.length > 0 ? teamsData : teams
+
+  return (
+    <Sidebar collapsible="icon" {...props}>
+      <SidebarHeader>
+        <div className="flex items-center gap-2 px-2 py-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/15 text-primary">
+            <span className="text-sm font-semibold">XT</span>
+          </div>
+          <div className="min-w-0 group-data-[collapsible=icon]:hidden">
+            <div className="truncate text-sm font-semibold">祥泰仓库数据管理平台</div>
+            <div className="truncate text-xs text-muted-foreground">数据管理</div>
+          </div>
+        </div>
+        <TeamSwitcher teams={teamOptions} currentTeam={currentTeam} onTeamSelect={setCurrentTeam} />
+      </SidebarHeader>
+      <SidebarContent>
+        <NavMain items={navMain} />
+        {teamLinks.length > 0 && <NavProjects label="团队" projects={teamLinks} />}
+      </SidebarContent>
+      <SidebarFooter>
+        <div className="flex items-center gap-2">
+          <div className="flex-1 min-w-0">
+            <NavUser />
+          </div>
+          <div className="shrink-0 group-data-[collapsible=icon]:hidden">
+            <ThemeToggle />
+          </div>
+        </div>
+      </SidebarFooter>
+      <SidebarRail />
+    </Sidebar>
+  )
+}

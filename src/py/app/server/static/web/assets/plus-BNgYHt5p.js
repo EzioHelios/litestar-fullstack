@@ -1,0 +1,1 @@
+import{c as o}from"./main-DvZilNiI.js";const t=[["path",{d:"m9 18 6-6-6-6",key:"mthhwq"}]],h=o("chevron-right",t);const e=[["path",{d:"M5 12h14",key:"1ays0h"}],["path",{d:"M12 5v14",key:"s699le"}]],s=o("plus",e);export{h as C,s as P};

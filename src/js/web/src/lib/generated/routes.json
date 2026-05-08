@@ -1,0 +1,2112 @@
+{
+  "litestar_version": "Version(major=2, minor=19, patch=0, release_level='final', serial=0)",
+  "routes": {
+    "accept_team_invitation": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "parameterTypes": {
+        "invitation_id": "UUID",
+        "team_id": "UUID"
+      },
+      "parameters": [
+        "invitation_id",
+        "team_id"
+      ],
+      "uri": "/api/teams/{team_id}/invitations/{invitation_id}/accept"
+    },
+    "add_member_to_team": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "parameterTypes": {
+        "team_id": "UUID"
+      },
+      "parameters": [
+        "team_id"
+      ],
+      "uri": "/api/teams/{team_id}/members"
+    },
+    "approve_scope1_mobile": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope1-mobile-combustion/{record_id}/approve"
+    },
+    "approve_scope1_refrigerant": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope1-refrigerant-leak/{record_id}/approve"
+    },
+    "approve_scope1_stationary": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope1-stationary-combustion/{record_id}/approve"
+    },
+    "approve_scope2_bill": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope2-electricity-bill/{record_id}/approve"
+    },
+    "approve_scope3_transport": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope3-third-party-transport/{record_id}/approve"
+    },
+    "approve_scope3_waste": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope3-waste-disposal/{record_id}/approve"
+    },
+    "assign_role": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "parameterTypes": {
+        "role_slug": "string"
+      },
+      "parameters": [
+        "role_slug"
+      ],
+      "uri": "/api/roles/{role_slug}/assign"
+    },
+    "assign_role_api_users_roles": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "queryParameters": {
+        "role_slug": "string"
+      },
+      "uri": "/api/users/roles"
+    },
+    "confirm_setup": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/mfa/confirm"
+    },
+    "create_employee_commute": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/data/employee-commute"
+    },
+    "create_role": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/roles"
+    },
+    "create_scope1_mobile": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/carbon/scope1-mobile-combustion"
+    },
+    "create_scope1_refrigerant": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/carbon/scope1-refrigerant-leak"
+    },
+    "create_scope1_stationary": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/carbon/scope1-stationary-combustion"
+    },
+    "create_scope2_bill": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/carbon/scope2-electricity-bill"
+    },
+    "create_scope3_transport": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/carbon/scope3-third-party-transport"
+    },
+    "create_scope3_waste": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/carbon/scope3-waste-disposal"
+    },
+    "create_tag": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/tags"
+    },
+    "create_team": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/teams"
+    },
+    "create_team_invitation": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "parameterTypes": {
+        "team_id": "UUID"
+      },
+      "parameters": [
+        "team_id"
+      ],
+      "uri": "/api/teams/{team_id}/invitations"
+    },
+    "create_user": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/users"
+    },
+    "delete_employee_commute": {
+      "method": "delete",
+      "methods": [
+        "DELETE"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/data/employee-commute/{record_id}"
+    },
+    "delete_role": {
+      "method": "delete",
+      "methods": [
+        "DELETE"
+      ],
+      "parameterTypes": {
+        "role_id": "UUID"
+      },
+      "parameters": [
+        "role_id"
+      ],
+      "uri": "/api/roles/{role_id}"
+    },
+    "delete_scope1_mobile": {
+      "method": "delete",
+      "methods": [
+        "DELETE"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope1-mobile-combustion/{record_id}"
+    },
+    "delete_scope1_refrigerant": {
+      "method": "delete",
+      "methods": [
+        "DELETE"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope1-refrigerant-leak/{record_id}"
+    },
+    "delete_scope1_stationary": {
+      "method": "delete",
+      "methods": [
+        "DELETE"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope1-stationary-combustion/{record_id}"
+    },
+    "delete_scope2_bill": {
+      "method": "delete",
+      "methods": [
+        "DELETE"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope2-electricity-bill/{record_id}"
+    },
+    "delete_scope3_transport": {
+      "method": "delete",
+      "methods": [
+        "DELETE"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope3-third-party-transport/{record_id}"
+    },
+    "delete_scope3_waste": {
+      "method": "delete",
+      "methods": [
+        "DELETE"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope3-waste-disposal/{record_id}"
+    },
+    "delete_tag": {
+      "method": "delete",
+      "methods": [
+        "DELETE"
+      ],
+      "parameterTypes": {
+        "tag_id": "UUID"
+      },
+      "parameters": [
+        "tag_id"
+      ],
+      "uri": "/api/tags/{tag_id}"
+    },
+    "delete_team": {
+      "method": "delete",
+      "methods": [
+        "DELETE"
+      ],
+      "parameterTypes": {
+        "team_id": "UUID"
+      },
+      "parameters": [
+        "team_id"
+      ],
+      "uri": "/api/admin/teams/{team_id}"
+    },
+    "delete_team_api_teams_team_id:uuid": {
+      "method": "delete",
+      "methods": [
+        "DELETE"
+      ],
+      "parameterTypes": {
+        "team_id": "UUID"
+      },
+      "parameters": [
+        "team_id"
+      ],
+      "uri": "/api/teams/{team_id}"
+    },
+    "delete_team_invitation": {
+      "method": "delete",
+      "methods": [
+        "DELETE"
+      ],
+      "parameterTypes": {
+        "invitation_id": "UUID",
+        "team_id": "UUID"
+      },
+      "parameters": [
+        "invitation_id",
+        "team_id"
+      ],
+      "uri": "/api/teams/{team_id}/invitations/{invitation_id}"
+    },
+    "delete_user": {
+      "method": "delete",
+      "methods": [
+        "DELETE"
+      ],
+      "parameterTypes": {
+        "user_id": "UUID"
+      },
+      "parameters": [
+        "user_id"
+      ],
+      "uri": "/api/admin/users/{user_id}"
+    },
+    "delete_user_api_users_user_id:uuid": {
+      "method": "delete",
+      "methods": [
+        "DELETE"
+      ],
+      "parameterTypes": {
+        "user_id": "UUID"
+      },
+      "parameters": [
+        "user_id"
+      ],
+      "uri": "/api/users/{user_id}"
+    },
+    "disable_mfa": {
+      "method": "delete",
+      "methods": [
+        "DELETE"
+      ],
+      "uri": "/api/mfa/disable"
+    },
+    "forgot_password": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/access/forgot-password"
+    },
+    "get_activity": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "queryParameters": {
+        "hours": "number | undefined",
+        "limit": "number | undefined"
+      },
+      "uri": "/api/admin/dashboard/activity"
+    },
+    "get_all_monitor_sector": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/map/monitorSector/list"
+    },
+    "get_all_videos": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/map/videos"
+    },
+    "get_energy_storage_data": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/page3/cnsy"
+    },
+    "get_hwpm_show_num": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/hwpm/show/num"
+    },
+    "get_log": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "log_id": "UUID"
+      },
+      "parameters": [
+        "log_id"
+      ],
+      "uri": "/api/admin/audit/{log_id}"
+    },
+    "get_map_popup": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "area_id": "string"
+      },
+      "parameters": [
+        "area_id"
+      ],
+      "uri": "/api/map/popup/{area_id}"
+    },
+    "get_mfa_status": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/mfa/status"
+    },
+    "get_page1_ck_information": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/page1/ckxxgk"
+    },
+    "get_page1_cpfgl": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "stat_type": "string"
+      },
+      "parameters": [
+        "stat_type"
+      ],
+      "uri": "/api/page1/cpfgl/{stat_type}"
+    },
+    "get_page1_jcdw_statis": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/page1/jcdwzxtj"
+    },
+    "get_page1_latestwj": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/page1/latestwj"
+    },
+    "get_page1_tpfgl": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "stat_type": "string"
+      },
+      "parameters": [
+        "stat_type"
+      ],
+      "uri": "/api/page1/tpfgl/{stat_type}"
+    },
+    "get_page1_ydfd_statis": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "stat_type": "string"
+      },
+      "parameters": [
+        "stat_type"
+      ],
+      "uri": "/api/page1/ydfdtj/{stat_type}"
+    },
+    "get_page1_ydfdzl": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "stat_type": "string"
+      },
+      "parameters": [
+        "stat_type"
+      ],
+      "uri": "/api/page1/ydfdzl/{stat_type}"
+    },
+    "get_page1_ydfdzl_qy": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "stat_type": "string"
+      },
+      "parameters": [
+        "stat_type"
+      ],
+      "uri": "/api/page1/ydfdzl/qypx/{stat_type}"
+    },
+    "get_page1_yjzl": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "stat_type": "string"
+      },
+      "parameters": [
+        "stat_type"
+      ],
+      "uri": "/api/page1/yjzl/{stat_type}"
+    },
+    "get_page1_zjyj": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/page1/zjyj"
+    },
+    "get_page2_latestyj": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/page2/latestyj"
+    },
+    "get_page2_spgl": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/page2/spgl"
+    },
+    "get_page2_spjk": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/page2/spjk"
+    },
+    "get_page2_yjzl": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "stat_type": "string"
+      },
+      "parameters": [
+        "stat_type"
+      ],
+      "uri": "/api/page2/yjzl/{stat_type}"
+    },
+    "get_page2_zjyj": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/page2/zjyj"
+    },
+    "get_page3_cdz_statis": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/page3/cdzqy/ljydtj"
+    },
+    "get_page3_fdyd_statis_for_chart": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "stat_type": "string"
+      },
+      "parameters": [
+        "stat_type"
+      ],
+      "uri": "/api/page3/ydfdtj/chart/{stat_type}"
+    },
+    "get_page3_gffd_statis": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/page3/gfqy/ljfdtj"
+    },
+    "get_page3_latestyj": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/page3/latestyj"
+    },
+    "get_page3_yd_statis": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/page3/ckqy/ljydtj"
+    },
+    "get_page3_yjtj": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "stat_type": "string"
+      },
+      "parameters": [
+        "stat_type"
+      ],
+      "uri": "/api/page3/yjtj/{stat_type}"
+    },
+    "get_page3_yjtj_2": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "stat_type": "string"
+      },
+      "parameters": [
+        "stat_type"
+      ],
+      "uri": "/api/page3/yjtj/qypx/{stat_type}"
+    },
+    "get_page3_zjyj": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/page3/zjyj"
+    },
+    "get_page4_cktpfqd_statis_for_chart": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "stat_type": "string"
+      },
+      "parameters": [
+        "stat_type"
+      ],
+      "uri": "/api/page4/cktpfqd/chart/{stat_type}"
+    },
+    "get_page4_cpf_statis": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/page4/tpfltj"
+    },
+    "get_page4_cpf_zl": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "stat_type": "string"
+      },
+      "parameters": [
+        "stat_type"
+      ],
+      "uri": "/api/page4/tpflzl/{stat_type}"
+    },
+    "get_page4_cpfl_qy": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "stat_type": "string"
+      },
+      "parameters": [
+        "stat_type"
+      ],
+      "uri": "/api/page4/tpfl/ckqypx/{stat_type}"
+    },
+    "get_page4_latestyj": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/page4/latestyj"
+    },
+    "get_page4_pfl_statis_for_chart": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "stat_type": "string"
+      },
+      "parameters": [
+        "stat_type"
+      ],
+      "uri": "/api/page4/tpfltj/chart/{stat_type}"
+    },
+    "get_page4_qy_tpfyj": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "stat_type": "string"
+      },
+      "parameters": [
+        "stat_type"
+      ],
+      "uri": "/api/page4/qytpfyj/{stat_type}"
+    },
+    "get_page4_year_cpfl": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/page4/tpfl/year"
+    },
+    "get_page4_yjtj": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "stat_type": "string"
+      },
+      "parameters": [
+        "stat_type"
+      ],
+      "uri": "/api/page4/yjtj/{stat_type}"
+    },
+    "get_page4_yjtj_2": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "stat_type": "string"
+      },
+      "parameters": [
+        "stat_type"
+      ],
+      "uri": "/api/page4/yjtj/qypx/{stat_type}"
+    },
+    "get_page4_zjyj": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/page4/zjyj"
+    },
+    "get_profile": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/me"
+    },
+    "get_role": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "role_id": "UUID"
+      },
+      "parameters": [
+        "role_id"
+      ],
+      "uri": "/api/roles/{role_id}"
+    },
+    "get_scope1_mobile": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope1-mobile-combustion/{record_id}"
+    },
+    "get_scope1_refrigerant": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope1-refrigerant-leak/{record_id}"
+    },
+    "get_scope1_stationary": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope1-stationary-combustion/{record_id}"
+    },
+    "get_scope2_bill": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope2-electricity-bill/{record_id}"
+    },
+    "get_scope3_transport": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope3-third-party-transport/{record_id}"
+    },
+    "get_scope3_waste": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope3-waste-disposal/{record_id}"
+    },
+    "get_sessions": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "queryParameters": {
+        "createdAfter": "DateTime | undefined",
+        "createdBefore": "DateTime | undefined",
+        "currentPage": "number | undefined",
+        "orderBy": "string | undefined",
+        "pageSize": "number | undefined",
+        "sortOrder": "\"asc\" | \"desc\" | undefined"
+      },
+      "uri": "/api/access/sessions"
+    },
+    "get_stats": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/admin/dashboard/stats"
+    },
+    "get_tag": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "tag_id": "UUID"
+      },
+      "parameters": [
+        "tag_id"
+      ],
+      "uri": "/api/tags/{tag_id}"
+    },
+    "get_target_logs": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "target_id": "string",
+        "target_type": "string"
+      },
+      "parameters": [
+        "target_id",
+        "target_type"
+      ],
+      "queryParameters": {
+        "action": "string | undefined",
+        "actionIn": "string[] | undefined",
+        "actorIdIn": "string[] | undefined",
+        "createdAfter": "DateTime | undefined",
+        "createdBefore": "DateTime | undefined",
+        "currentPage": "number | undefined",
+        "end_date": "DateTime | undefined",
+        "ids": "string[] | undefined",
+        "orderBy": "string | undefined",
+        "pageSize": "number | undefined",
+        "searchIgnoreCase": "boolean | undefined",
+        "searchString": "string | undefined",
+        "sortOrder": "\"asc\" | \"desc\" | undefined",
+        "targetIdIn": "string[] | undefined",
+        "targetTypeIn": "string[] | undefined"
+      },
+      "uri": "/api/admin/audit/target/{target_type}/{target_id}"
+    },
+    "get_team": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "team_id": "UUID"
+      },
+      "parameters": [
+        "team_id"
+      ],
+      "uri": "/api/admin/teams/{team_id}"
+    },
+    "get_team_api_teams_team_id:uuid": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "team_id": "UUID"
+      },
+      "parameters": [
+        "team_id"
+      ],
+      "uri": "/api/teams/{team_id}"
+    },
+    "get_user": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "user_id": "UUID"
+      },
+      "parameters": [
+        "user_id"
+      ],
+      "uri": "/api/admin/users/{user_id}"
+    },
+    "get_user_api_users_user_id:uuid": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "user_id": "UUID"
+      },
+      "parameters": [
+        "user_id"
+      ],
+      "uri": "/api/users/{user_id}"
+    },
+    "get_user_logs": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "user_id": "UUID"
+      },
+      "parameters": [
+        "user_id"
+      ],
+      "queryParameters": {
+        "action": "string | undefined",
+        "actionIn": "string[] | undefined",
+        "actorIdIn": "string[] | undefined",
+        "createdAfter": "DateTime | undefined",
+        "createdBefore": "DateTime | undefined",
+        "currentPage": "number | undefined",
+        "end_date": "DateTime | undefined",
+        "ids": "string[] | undefined",
+        "orderBy": "string | undefined",
+        "pageSize": "number | undefined",
+        "searchIgnoreCase": "boolean | undefined",
+        "searchString": "string | undefined",
+        "sortOrder": "\"asc\" | \"desc\" | undefined",
+        "targetIdIn": "string[] | undefined",
+        "targetTypeIn": "string[] | undefined"
+      },
+      "uri": "/api/admin/audit/user/{user_id}"
+    },
+    "get_vedio_map_popup": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "vid": "number"
+      },
+      "parameters": [
+        "vid"
+      ],
+      "uri": "/api/map/vedio/popup/{vid}"
+    },
+    "get_verification_status": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "user_id": "UUID"
+      },
+      "parameters": [
+        "user_id"
+      ],
+      "uri": "/api/email-verification/status/{user_id}"
+    },
+    "handle_all_events": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/handleAllEvents"
+    },
+    "handle_all_events_zjyj": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/zjyj/handleAllEvents"
+    },
+    "handle_all_video_events": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/handleAllVideoEvents"
+    },
+    "handle_all_video_events_zjyj": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/zjyj/handleAllVideoEvents"
+    },
+    "handle_events": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/handleEvents"
+    },
+    "handle_events_zjyj": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/zjyj/handleEvents"
+    },
+    "handle_video_events": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/handleVideoEvents"
+    },
+    "handle_video_events_zjyj": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/zjyj/handleVideoEvents"
+    },
+    "initiate_disable_mfa_oauth": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "provider": "string"
+      },
+      "parameters": [
+        "provider"
+      ],
+      "uri": "/api/mfa/disable/oauth/{provider}"
+    },
+    "initiate_setup": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/mfa/enable"
+    },
+    "list_accounts": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "queryParameters": {
+        "createdAfter": "DateTime | undefined",
+        "createdBefore": "DateTime | undefined",
+        "currentPage": "number | undefined",
+        "orderBy": "string | undefined",
+        "pageSize": "number | undefined",
+        "sortOrder": "\"asc\" | \"desc\" | undefined"
+      },
+      "uri": "/api/profile/oauth/accounts"
+    },
+    "list_carbon_audit_logs": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "queryParameters": {
+        "action": "string | undefined",
+        "limit": "number | undefined",
+        "record_type": "string | undefined"
+      },
+      "uri": "/api/carbon/audit-logs"
+    },
+    "list_emission_factors": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/carbon/emission-factors"
+    },
+    "list_employee_commute": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/data/employee-commute"
+    },
+    "list_iot_telemetry": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "queryParameters": {
+        "device_id": "string | undefined",
+        "limit": "number | undefined",
+        "site_id": "string | undefined"
+      },
+      "uri": "/api/carbon/iot-telemetry"
+    },
+    "list_logs": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "queryParameters": {
+        "action": "string | undefined",
+        "actionIn": "string[] | undefined",
+        "actorIdIn": "string[] | undefined",
+        "createdAfter": "DateTime | undefined",
+        "createdBefore": "DateTime | undefined",
+        "currentPage": "number | undefined",
+        "end_date": "DateTime | undefined",
+        "ids": "string[] | undefined",
+        "orderBy": "string | undefined",
+        "pageSize": "number | undefined",
+        "searchIgnoreCase": "boolean | undefined",
+        "searchString": "string | undefined",
+        "sortOrder": "\"asc\" | \"desc\" | undefined",
+        "targetIdIn": "string[] | undefined",
+        "targetTypeIn": "string[] | undefined"
+      },
+      "uri": "/api/admin/audit"
+    },
+    "list_pending": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/carbon/pending"
+    },
+    "list_roles": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "queryParameters": {
+        "currentPage": "number | undefined",
+        "ids": "string[] | undefined",
+        "orderBy": "string | undefined",
+        "pageSize": "number | undefined",
+        "searchIgnoreCase": "boolean | undefined",
+        "searchString": "string | undefined",
+        "sortOrder": "\"asc\" | \"desc\" | undefined"
+      },
+      "uri": "/api/roles"
+    },
+    "list_scope1_mobile": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/carbon/scope1-mobile-combustion"
+    },
+    "list_scope1_refrigerant": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/carbon/scope1-refrigerant-leak"
+    },
+    "list_scope1_stationary": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/carbon/scope1-stationary-combustion"
+    },
+    "list_scope2_bill": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/carbon/scope2-electricity-bill"
+    },
+    "list_scope3_transport": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/carbon/scope3-third-party-transport"
+    },
+    "list_scope3_waste": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/carbon/scope3-waste-disposal"
+    },
+    "list_tags": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "queryParameters": {
+        "createdAfter": "DateTime | undefined",
+        "createdBefore": "DateTime | undefined",
+        "currentPage": "number | undefined",
+        "ids": "string[] | undefined",
+        "orderBy": "string | undefined",
+        "pageSize": "number | undefined",
+        "searchIgnoreCase": "boolean | undefined",
+        "searchString": "string | undefined",
+        "sortOrder": "\"asc\" | \"desc\" | undefined",
+        "updatedAfter": "DateTime | undefined",
+        "updatedBefore": "DateTime | undefined"
+      },
+      "uri": "/api/tags"
+    },
+    "list_team_invitations": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "team_id": "UUID"
+      },
+      "parameters": [
+        "team_id"
+      ],
+      "queryParameters": {
+        "createdAfter": "DateTime | undefined",
+        "createdBefore": "DateTime | undefined",
+        "currentPage": "number | undefined",
+        "orderBy": "string | undefined",
+        "pageSize": "number | undefined",
+        "sortOrder": "\"asc\" | \"desc\" | undefined",
+        "updatedAfter": "DateTime | undefined",
+        "updatedBefore": "DateTime | undefined"
+      },
+      "uri": "/api/teams/{team_id}/invitations"
+    },
+    "list_teams": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "queryParameters": {
+        "createdAfter": "DateTime | undefined",
+        "createdBefore": "DateTime | undefined",
+        "currentPage": "number | undefined",
+        "ids": "string[] | undefined",
+        "orderBy": "string | undefined",
+        "pageSize": "number | undefined",
+        "searchIgnoreCase": "boolean | undefined",
+        "searchString": "string | undefined",
+        "sortOrder": "\"asc\" | \"desc\" | undefined",
+        "updatedAfter": "DateTime | undefined",
+        "updatedBefore": "DateTime | undefined"
+      },
+      "uri": "/api/admin/teams"
+    },
+    "list_teams_api_teams": {
+      "component": "team/list",
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "queryParameters": {
+        "createdAfter": "DateTime | undefined",
+        "createdBefore": "DateTime | undefined",
+        "currentPage": "number | undefined",
+        "ids": "string[] | undefined",
+        "orderBy": "string | undefined",
+        "pageSize": "number | undefined",
+        "searchIgnoreCase": "boolean | undefined",
+        "searchString": "string | undefined",
+        "sortOrder": "\"asc\" | \"desc\" | undefined",
+        "updatedAfter": "DateTime | undefined",
+        "updatedBefore": "DateTime | undefined"
+      },
+      "uri": "/api/teams"
+    },
+    "list_users": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "queryParameters": {
+        "createdAfter": "DateTime | undefined",
+        "createdBefore": "DateTime | undefined",
+        "currentPage": "number | undefined",
+        "ids": "string[] | undefined",
+        "orderBy": "string | undefined",
+        "pageSize": "number | undefined",
+        "searchIgnoreCase": "boolean | undefined",
+        "searchString": "string | undefined",
+        "sortOrder": "\"asc\" | \"desc\" | undefined",
+        "updatedAfter": "DateTime | undefined",
+        "updatedBefore": "DateTime | undefined"
+      },
+      "uri": "/api/admin/users"
+    },
+    "list_users_api_users": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "queryParameters": {
+        "createdAfter": "DateTime | undefined",
+        "createdBefore": "DateTime | undefined",
+        "currentPage": "number | undefined",
+        "ids": "string[] | undefined",
+        "orderBy": "string | undefined",
+        "pageSize": "number | undefined",
+        "searchIgnoreCase": "boolean | undefined",
+        "searchString": "string | undefined",
+        "sortOrder": "\"asc\" | \"desc\" | undefined",
+        "updatedAfter": "DateTime | undefined",
+        "updatedBefore": "DateTime | undefined"
+      },
+      "uri": "/api/users"
+    },
+    "login": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/access/login"
+    },
+    "logout": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/access/logout"
+    },
+    "oauth:github:authorize": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "queryParameters": {
+        "redirect_url": "string | undefined"
+      },
+      "uri": "/api/auth/oauth/github"
+    },
+    "oauth:github:callback": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "queryParameters": {
+        "code": "string | undefined",
+        "error": "string | undefined",
+        "error_description": "string | undefined",
+        "state": "string | undefined"
+      },
+      "uri": "/api/auth/oauth/github/callback"
+    },
+    "oauth:google:authorize": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "queryParameters": {
+        "redirect_url": "string | undefined"
+      },
+      "uri": "/api/auth/oauth/google"
+    },
+    "oauth:google:callback": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "queryParameters": {
+        "code": "string | undefined",
+        "error": "string | undefined",
+        "state": "string | undefined"
+      },
+      "uri": "/api/auth/oauth/google/callback"
+    },
+    "openapi.json": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/schema/openapi.json"
+    },
+    "pull_vedio_alarm_event": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/pullVedioAlarmEvent"
+    },
+    "refresh_token": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/access/refresh"
+    },
+    "regenerate_backup_codes": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/mfa/regenerate-codes"
+    },
+    "reject_scope1_mobile": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope1-mobile-combustion/{record_id}/reject"
+    },
+    "reject_scope1_refrigerant": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope1-refrigerant-leak/{record_id}/reject"
+    },
+    "reject_scope1_stationary": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope1-stationary-combustion/{record_id}/reject"
+    },
+    "reject_scope2_bill": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope2-electricity-bill/{record_id}/reject"
+    },
+    "reject_scope3_transport": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope3-third-party-transport/{record_id}/reject"
+    },
+    "reject_scope3_waste": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope3-waste-disposal/{record_id}/reject"
+    },
+    "reject_team_invitation": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "parameterTypes": {
+        "invitation_id": "UUID",
+        "team_id": "UUID"
+      },
+      "parameters": [
+        "invitation_id",
+        "team_id"
+      ],
+      "uri": "/api/teams/{team_id}/invitations/{invitation_id}/reject"
+    },
+    "remove_account": {
+      "method": "delete",
+      "methods": [
+        "DELETE"
+      ],
+      "uri": "/api/me"
+    },
+    "remove_member_from_team": {
+      "method": "delete",
+      "methods": [
+        "DELETE"
+      ],
+      "parameterTypes": {
+        "team_id": "UUID"
+      },
+      "parameters": [
+        "team_id"
+      ],
+      "uri": "/api/teams/{team_id}/members"
+    },
+    "request_verification": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/email-verification/request"
+    },
+    "reset_password_with_token": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/access/reset-password"
+    },
+    "revoke_all_sessions": {
+      "method": "delete",
+      "methods": [
+        "DELETE"
+      ],
+      "uri": "/api/access/sessions"
+    },
+    "revoke_role": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "parameterTypes": {
+        "role_slug": "string"
+      },
+      "parameters": [
+        "role_slug"
+      ],
+      "uri": "/api/roles/{role_slug}/revoke"
+    },
+    "revoke_role_api_users_roles": {
+      "method": "delete",
+      "methods": [
+        "DELETE"
+      ],
+      "queryParameters": {
+        "role_slug": "string"
+      },
+      "uri": "/api/users/roles"
+    },
+    "revoke_session": {
+      "method": "delete",
+      "methods": [
+        "DELETE"
+      ],
+      "parameterTypes": {
+        "session_id": "UUID"
+      },
+      "parameters": [
+        "session_id"
+      ],
+      "uri": "/api/access/sessions/{session_id}"
+    },
+    "signup": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/access/signup"
+    },
+    "start_link": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "parameterTypes": {
+        "provider": "string"
+      },
+      "parameters": [
+        "provider"
+      ],
+      "queryParameters": {
+        "redirect_url": "string | undefined"
+      },
+      "uri": "/api/profile/oauth/{provider}/link"
+    },
+    "submit_scope1_mobile": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope1-mobile-combustion/{record_id}/submit"
+    },
+    "submit_scope1_refrigerant": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope1-refrigerant-leak/{record_id}/submit"
+    },
+    "submit_scope1_stationary": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope1-stationary-combustion/{record_id}/submit"
+    },
+    "submit_scope2_bill": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope2-electricity-bill/{record_id}/submit"
+    },
+    "submit_scope3_transport": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope3-third-party-transport/{record_id}/submit"
+    },
+    "submit_scope3_waste": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope3-waste-disposal/{record_id}/submit"
+    },
+    "system:health": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/health"
+    },
+    "system:oauth-config": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/api/config/oauth"
+    },
+    "unlink": {
+      "method": "delete",
+      "methods": [
+        "DELETE"
+      ],
+      "parameterTypes": {
+        "provider": "string"
+      },
+      "parameters": [
+        "provider"
+      ],
+      "uri": "/api/profile/oauth/{provider}"
+    },
+    "update_employee_commute": {
+      "method": "patch",
+      "methods": [
+        "PATCH"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/data/employee-commute/{record_id}"
+    },
+    "update_password": {
+      "method": "patch",
+      "methods": [
+        "PATCH"
+      ],
+      "uri": "/api/me/password"
+    },
+    "update_profile": {
+      "method": "patch",
+      "methods": [
+        "PATCH"
+      ],
+      "uri": "/api/me"
+    },
+    "update_role": {
+      "method": "patch",
+      "methods": [
+        "PATCH"
+      ],
+      "parameterTypes": {
+        "role_id": "UUID"
+      },
+      "parameters": [
+        "role_id"
+      ],
+      "uri": "/api/roles/{role_id}"
+    },
+    "update_scope1_mobile": {
+      "method": "patch",
+      "methods": [
+        "PATCH"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope1-mobile-combustion/{record_id}"
+    },
+    "update_scope1_refrigerant": {
+      "method": "patch",
+      "methods": [
+        "PATCH"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope1-refrigerant-leak/{record_id}"
+    },
+    "update_scope1_stationary": {
+      "method": "patch",
+      "methods": [
+        "PATCH"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope1-stationary-combustion/{record_id}"
+    },
+    "update_scope2_bill": {
+      "method": "patch",
+      "methods": [
+        "PATCH"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope2-electricity-bill/{record_id}"
+    },
+    "update_scope3_transport": {
+      "method": "patch",
+      "methods": [
+        "PATCH"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope3-third-party-transport/{record_id}"
+    },
+    "update_scope3_waste": {
+      "method": "patch",
+      "methods": [
+        "PATCH"
+      ],
+      "parameterTypes": {
+        "record_id": "number"
+      },
+      "parameters": [
+        "record_id"
+      ],
+      "uri": "/api/carbon/scope3-waste-disposal/{record_id}"
+    },
+    "update_tag": {
+      "method": "patch",
+      "methods": [
+        "PATCH"
+      ],
+      "parameterTypes": {
+        "tag_id": "UUID"
+      },
+      "parameters": [
+        "tag_id"
+      ],
+      "uri": "/api/tags/{tag_id}"
+    },
+    "update_team": {
+      "method": "patch",
+      "methods": [
+        "PATCH"
+      ],
+      "parameterTypes": {
+        "team_id": "UUID"
+      },
+      "parameters": [
+        "team_id"
+      ],
+      "uri": "/api/admin/teams/{team_id}"
+    },
+    "update_team_api_teams_team_id:uuid": {
+      "method": "patch",
+      "methods": [
+        "PATCH"
+      ],
+      "parameterTypes": {
+        "team_id": "UUID"
+      },
+      "parameters": [
+        "team_id"
+      ],
+      "uri": "/api/teams/{team_id}"
+    },
+    "update_team_member": {
+      "method": "patch",
+      "methods": [
+        "PATCH"
+      ],
+      "parameterTypes": {
+        "team_id": "UUID",
+        "user_id": "UUID"
+      },
+      "parameters": [
+        "team_id",
+        "user_id"
+      ],
+      "uri": "/api/teams/{team_id}/members/{user_id}"
+    },
+    "update_user": {
+      "method": "patch",
+      "methods": [
+        "PATCH"
+      ],
+      "parameterTypes": {
+        "user_id": "UUID"
+      },
+      "parameters": [
+        "user_id"
+      ],
+      "uri": "/api/admin/users/{user_id}"
+    },
+    "update_user_api_users_user_id:uuid": {
+      "method": "patch",
+      "methods": [
+        "PATCH"
+      ],
+      "parameterTypes": {
+        "user_id": "UUID"
+      },
+      "parameters": [
+        "user_id"
+      ],
+      "uri": "/api/users/{user_id}"
+    },
+    "upgrade_scopes": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "parameterTypes": {
+        "provider": "string"
+      },
+      "parameters": [
+        "provider"
+      ],
+      "queryParameters": {
+        "redirect_url": "string | undefined"
+      },
+      "uri": "/api/profile/oauth/{provider}/upgrade-scopes"
+    },
+    "validate_reset_token": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "queryParameters": {
+        "token": "string"
+      },
+      "uri": "/api/access/reset-password"
+    },
+    "verify_challenge": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/mfa/challenge/verify"
+    },
+    "verify_email": {
+      "method": "post",
+      "methods": [
+        "POST"
+      ],
+      "uri": "/api/email-verification/verify"
+    },
+    "vite": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "file_path": "any"
+      },
+      "parameters": [
+        "file_path"
+      ],
+      "uri": "/static/{file_path}"
+    },
+    "vite_spa": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "uri": "/"
+    },
+    "vite_spa_path:path": {
+      "method": "get",
+      "methods": [
+        "GET"
+      ],
+      "parameterTypes": {
+        "path": "URI"
+      },
+      "parameters": [
+        "path"
+      ],
+      "uri": "/{path}"
+    }
+  }
+}

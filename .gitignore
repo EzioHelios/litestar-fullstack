@@ -1,0 +1,77 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.pyright/
+.dmypy.json
+dmypy.json
+.coverage
+coverage.xml
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment and local secrets
+.env
+.env.local
+.env.*.local
+src/py/.env
+!src/py/tests/.env.testing
+
+# Build artifacts
+dist/
+build/
+*.egg-info/
+site/
+
+# JavaScript dependencies and build output
+node_modules/
+src/js/**/node_modules/
+src/js/**/dist/
+src/js/**/.vite/
+src/js/**/coverage/
+
+# Logs and transient diagnostics
+*.log
+*.tmp
+*.bak
+debug_output*.txt
+routes.txt
+/listening_ports.txt
+/src/py/error_body.txt
+
+# Local database/migration investigation scratch files
+/check_*.py
+/compare_columns.py
+/debug_*.py
+/drop_all_tables.py
+/extract_definitions.py
+/extracted_views.sql
+/find_all_objects.py
+/inspect_auditlog.py
+/list_*.py
+/migrate_data*.py
+/objects_list.txt
+/tables_list.txt
+/test_carbon_apis.py
+/test_legacy_db.py
+/tmp_check_db.py
+/verification_results.txt
+/verify_auditlog_schema.py
+/views_list.txt
+/src/py/debug_service.py
+/src/py/inspect_db.py
+/src/py/list_users.py
+/src/py/query_users_raw.py
+
+# OS/editor noise
+.DS_Store
+.idea/
+.vscode/
+*.swp

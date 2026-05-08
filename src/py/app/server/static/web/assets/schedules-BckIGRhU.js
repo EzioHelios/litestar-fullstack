@@ -1,0 +1,1 @@
+import{j as e}from"./main-DvZilNiI.js";import{P as o}from"./placeholder-page-a4yqVaOH.js";/* empty css               */function s(){return e.jsx(o,{eyebrow:"定时任务",title:"定时任务设置"})}export{s as component};

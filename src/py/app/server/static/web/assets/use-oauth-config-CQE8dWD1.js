@@ -1,0 +1,1 @@
+import{M as t,aT as a}from"./main-DvZilNiI.js";const n={googleEnabled:!1,githubEnabled:!1};async function o(){const e=await a();return e.error||!e.data?n:e.data}function u(){return t({queryKey:["oauth-config"],queryFn:o,staleTime:1e3*60*5,retry:!1})}export{u};

@@ -1,0 +1,1 @@
+import{j as o}from"./main-DvZilNiI.js";import{P as e}from"./placeholder-page-a4yqVaOH.js";/* empty css               */function m(){return o.jsx(e,{eyebrow:"数据管理",title:"入库管理"})}export{m as component};

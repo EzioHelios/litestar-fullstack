@@ -1,0 +1,1 @@
+import{j as o}from"./main-DvZilNiI.js";import{P as r}from"./placeholder-page-a4yqVaOH.js";/* empty css               */function n(){return o.jsx(r,{eyebrow:"定时任务",title:"crontab设置"})}export{n as component};

@@ -1,0 +1,1 @@
+import{j as e}from"./main-DvZilNiI.js";import{P as o}from"./placeholder-page-a4yqVaOH.js";/* empty css               */function i(){return e.jsx(o,{eyebrow:"数据管理",title:"接口结果key映射"})}export{i as component};

@@ -1,0 +1,40 @@
+{
+  "assetUrl": "/static/",
+  "deployAssetUrl": null,
+  "bundleDir": "../../py/app/server/static/web",
+  "hotFile": "hot",
+  "resourceDir": "src",
+  "staticDir": "public",
+  "manifest": "manifest.json",
+  "mode": "spa",
+  "proxyMode": "vite",
+  "port": 5173,
+  "host": "127.0.0.1",
+  "ssrOutDir": null,
+  "types": {
+    "enabled": true,
+    "output": "src/lib/generated",
+    "openapiPath": "src/lib/generated/openapi.json",
+    "routesPath": "src/lib/generated/routes.json",
+    "pagePropsPath": "src/lib/generated/inertia-pages.json",
+    "routesTsPath": "src/lib/generated/routes.ts",
+    "schemasTsPath": "src/lib/generated/schemas.ts",
+    "generateZod": false,
+    "generateSdk": true,
+    "generateRoutes": true,
+    "generatePageProps": true,
+    "generateSchemas": true,
+    "globalRoute": false
+  },
+  "logging": {
+    "level": "normal",
+    "showPathsAbsolute": false,
+    "suppressNpmOutput": false,
+    "suppressViteBanner": false,
+    "timestamps": false
+  },
+  "spa": null,
+  "executor": "bun",
+  "litestarVersion": "2.19.0",
+  "staticProps": null
+}
