@@ -1,1 +1,0 @@
-import{j as e}from"./main-DvZilNiI.js";import{P as o}from"./placeholder-page-a4yqVaOH.js";/* empty css               */function m(){return e.jsx(o,{eyebrow:"权限管理",title:"角色管理"})}export{m as component};

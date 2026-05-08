@@ -29,13 +29,19 @@ dist/
 build/
 *.egg-info/
 site/
+tmp/
 
-# JavaScript dependencies and build output
+# JavaScript dependencies, build output, and generated clients
 node_modules/
 src/js/**/node_modules/
 src/js/**/dist/
 src/js/**/.vite/
 src/js/**/coverage/
+src/js/web/package-lock.json
+src/js/web/src/lib/generated/
+src/js/web/src/routeTree.gen.ts
+src/py/app/server/static/email/
+src/py/app/server/static/web/
 
 # Logs and transient diagnostics
 *.log
@@ -43,32 +49,15 @@ src/js/**/coverage/
 *.bak
 debug_output*.txt
 routes.txt
-/listening_ports.txt
-/src/py/error_body.txt
+*.out
+*_ports.txt
+error_body.txt
 
-# Local database/migration investigation scratch files
-/check_*.py
-/compare_columns.py
-/debug_*.py
-/drop_all_tables.py
-/extract_definitions.py
-/extracted_views.sql
-/find_all_objects.py
-/inspect_auditlog.py
-/list_*.py
-/migrate_data*.py
-/objects_list.txt
-/tables_list.txt
-/test_carbon_apis.py
-/test_legacy_db.py
-/tmp_check_db.py
-/verification_results.txt
-/verify_auditlog_schema.py
-/views_list.txt
-/src/py/debug_service.py
-/src/py/inspect_db.py
-/src/py/list_users.py
-/src/py/query_users_raw.py
+# Local diagnostic outputs
+*.trace
+*_output.txt
+*_results.txt
+*_list.txt
 
 # OS/editor noise
 .DS_Store

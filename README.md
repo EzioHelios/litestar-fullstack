@@ -52,6 +52,9 @@ app database upgrade
 app run
 ```
 
+Generated frontend assets, React Email HTML, TanStack route trees, and OpenAPI TypeScript clients are not committed.
+Run `make types`, `make build-emails`, and `make build-assets` before packaging or when those generated outputs are needed locally.
+
 ### Docker
 
 If you want to run the entire development environment containerized, you can run the following:

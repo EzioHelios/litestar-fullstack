@@ -1,1 +1,0 @@
-import{j as e}from"./main-DvZilNiI.js";import{P as o}from"./placeholder-page-a4yqVaOH.js";/* empty css               */function a(){return e.jsx(o,{eyebrow:"数据管理",title:"预警规则"})}export{a as component};

@@ -1,1 +1,0 @@
-import{J as s}from"./main-DvZilNiI.js";function h(){const{user:t,logout:e,checkAuth:u,isLoading:o,isAuthenticated:r}=s();return{user:t,logout:e,refetch:u,isLoading:o,isAuthenticated:r}}export{h as u};
