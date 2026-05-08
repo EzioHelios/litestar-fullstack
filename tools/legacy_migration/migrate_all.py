@@ -3,16 +3,20 @@ import asyncio
 import os
 import sys
 from pathlib import Path
-from sqlalchemy import delete, insert, select, text, MetaData, create_engine, func
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src" / "py"))
+
+from sqlalchemy import MetaData, create_engine, delete, insert, select, text
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 # Fix for Windows asyncio loop policy
-if sys.platform == 'win32':
+if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 VIEWS_FILE = Path(__file__).parent / "recreate_views.sql"
 
 from app.db import models as m
+
 
 async def _copy_table(
     old_conn,
@@ -28,7 +32,7 @@ async def _copy_table(
         return
 
     print(f"Migrating {src_name} -> {dst_model.__tablename__}...")
-    
+
     # Clear target table
     await dst_session.execute(delete(dst_model))
     await dst_session.commit()
@@ -40,42 +44,42 @@ async def _copy_table(
         return
 
     print(f"  - Total rows to migrate: {total_count}")
-    
+
     # Check if 'id' exists for faster paging
-    has_id = 'id' in src_table.columns
-    
+    has_id = "id" in src_table.columns
+
     # Process in chunks
     offset = 0
     last_id = 0
-    
+
     while offset < total_count:
         if has_id:
             stmt = select(src_table).where(src_table.c.id > last_id).order_by(src_table.c.id).limit(chunk_size)
         else:
             stmt = select(src_table).offset(offset).limit(chunk_size)
-            
+
         src_result = old_conn.execute(stmt)
         rows = src_result.mappings().all()
-        
+
         if not rows:
             break
 
         payload = [dict(row) for row in rows]
         await dst_session.execute(insert(dst_model), payload)
         await dst_session.commit()
-        
+
         if has_id:
-            last_id = rows[-1]['id']
-        
+            last_id = rows[-1]["id"]
+
         offset += len(rows)
         print(f"  - Migrated {offset}/{total_count} rows...")
 
     print(f"  - Successfully migrated {total_count} rows.")
 
 async def migrate_all() -> None:
-    old_db_url_sync = "postgresql+psycopg://postgres:S070071@localhost:5431/db_xtck"
-    new_db_url_async = os.environ.get("NEW_DB_URL", "postgresql+psycopg://app:app@localhost:15432/app")
-    
+    old_db_url_sync = os.environ["OLD_DB_URL"]
+    new_db_url_async = os.environ["NEW_DB_URL"]
+
     print(f"Source DB (Sync): {old_db_url_sync}")
     print(f"Target DB (Async): {new_db_url_async}")
 
@@ -87,7 +91,7 @@ async def migrate_all() -> None:
     print("Reflecting source database schema...")
     with old_engine.connect() as old_conn:
         metadata.reflect(bind=old_conn)
-        
+
         # Mapping (Source Table -> Target Model)
         # Ordered by dependency if possible, but SET session_replication_role = 'replica' handles FKs.
         mapping = [
@@ -105,7 +109,7 @@ async def migrate_all() -> None:
             ("dataapp_alarmevent", m.AlarmEvent),
             ("dataapp_vedioalarmevent", m.VedioAlarmEvent),
             ("dataapp_energystoragevalue", m.EnergyStorageValue),
-            ("dataapp_auditlog", m.CarbonAuditLog), 
+            ("dataapp_auditlog", m.CarbonAuditLog),
             ("dataapp_emissionfactor", m.EmissionFactor),
             ("dataapp_iottelemetry", m.IotTelemetry),
             ("dataapp_scope1mobilecombustion", m.Scope1MobileCombustion),
@@ -136,7 +140,7 @@ async def migrate_all() -> None:
             # Recreate views
             print("Recreating views...")
             if VIEWS_FILE.exists():
-                with open(VIEWS_FILE, 'r', encoding='utf-8') as f:
+                with open(VIEWS_FILE, encoding="utf-8") as f:
                     content = f.read()
                     content = content.replace("public.", "")
                     statements = [s.strip() for s in content.split(";") if s.strip()]
@@ -145,7 +149,7 @@ async def migrate_all() -> None:
                             await new_sess.execute(text(stmt))
                             await new_sess.commit()
                         except Exception as e:
-                            err_msg = str(e).split('\n')[0]
+                            err_msg = str(e).split("\n")[0]
                             print(f"Error creating view: {err_msg[:120]}...")
                             await new_sess.rollback()
                 print("Views recreated.")

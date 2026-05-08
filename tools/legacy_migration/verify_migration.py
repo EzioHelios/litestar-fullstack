@@ -2,16 +2,17 @@
 import asyncio
 import os
 import sys
+
 from sqlalchemy import create_engine, text
 from sqlalchemy.ext.asyncio import create_async_engine
 
 # Fix for Windows asyncio loop policy
-if sys.platform == 'win32':
+if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
 async def verify():
-    old_db_url = "postgresql+psycopg://postgres:S070071@localhost:5431/db_xtck"
-    new_db_url = "postgresql+psycopg://app:app@localhost:15432/app"
+    old_db_url = os.environ["OLD_DB_URL"]
+    new_db_url = os.environ["NEW_DB_URL"]
 
     old_engine = create_engine(old_db_url)
     new_engine = create_async_engine(new_db_url)
@@ -43,11 +44,11 @@ async def verify():
                 try:
                     # Count source
                     src_count = old_conn.execute(text(f"SELECT count(*) FROM {src_name}")).scalar()
-                    
+
                     # Count target
                     dst_count_res = await new_conn.execute(text(f"SELECT count(*) FROM {dst_name}"))
                     dst_count = dst_count_res.scalar()
-                    
+
                     status = "OK" if src_count == dst_count else "MISMATCH"
                     print(f"{src_name:<35} | {src_count:<10} | {dst_count:<10} | {status}")
                 except Exception as e:
@@ -67,7 +68,7 @@ async def verify():
         "yj_area_day_sum_view", "yj_area_month_sum_view", "yj_area_week_sum_view", "yj_area_year_sum_view",
         "yj_day_hour_sum_view", "yj_day_sum_view", "yj_month_sum_view", "yj_week_sum_view", "yj_year_sum_view"
     ]
-    
+
     async with new_engine.connect() as new_conn:
         for view in views_to_check:
             try:

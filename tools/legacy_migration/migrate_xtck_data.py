@@ -6,8 +6,7 @@
 - 迁移逻辑尽量保持简单清晰，保证可以多次执行（先删后导入）。
 
 环境变量：
-- OLD_DB_URL：原 xtck_deploy 的 PostgreSQL 连接串，例如：
-  postgresql+psycopg://postgres:S070071@localhost:5431/db_xtck
+- OLD_DB_URL：原 xtck_deploy 的 PostgreSQL 连接串。
 - NEW_DB_URL：新 litestar-fullstack 使用的 PostgreSQL 连接串
 """
 
@@ -15,7 +14,11 @@ from __future__ import annotations
 
 import asyncio
 import os
-from typing import Sequence
+import sys
+from collections.abc import Sequence
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src" / "py"))
 
 from sqlalchemy import delete, insert, select
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession, async_sessionmaker, create_async_engine
@@ -114,4 +117,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-

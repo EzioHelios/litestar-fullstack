@@ -1,15 +1,20 @@
 
 import asyncio
-import uuid
-import traceback
 import sys
-from datetime import datetime, UTC
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
-from sqlalchemy.exc import IntegrityError as SQIntegrityError
+import traceback
+import uuid
+from datetime import UTC, datetime
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "src" / "py"))
+
 from advanced_alchemy.exceptions import IntegrityError as AAIntegrityError
-from app.lib.settings import get_settings
-from app.lib import crypt
+from sqlalchemy.exc import IntegrityError as SQIntegrityError
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+
 from app.db.models import User
+from app.lib import crypt
+from app.lib.settings import get_settings
 
 if sys.platform == "win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
@@ -22,7 +27,7 @@ async def create_root_user():
         try:
             password = "12345678"
             hashed_password = await crypt.get_password_hash(password)
-            
+
             now = datetime.now(UTC)
             user = User(
                 id=uuid.uuid4(),
@@ -44,11 +49,11 @@ async def create_root_user():
             print("User root@example.com created successfully.")
         except (SQIntegrityError, AAIntegrityError) as e:
             print(f"IntegrityError: {e}")
-            if hasattr(e, 'orig'):
+            if hasattr(e, "orig"):
                 print(f"Orig: {e.orig}")
-            if hasattr(e, 'statement'):
+            if hasattr(e, "statement"):
                 print(f"Statement: {e.statement}")
-            if hasattr(e, 'params'):
+            if hasattr(e, "params"):
                 print(f"Params: {e.params}")
         except Exception:
             traceback.print_exc()
