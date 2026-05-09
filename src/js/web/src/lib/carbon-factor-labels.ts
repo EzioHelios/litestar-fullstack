@@ -46,9 +46,15 @@ const SOURCE_SYSTEM_LABELS: Record<string, string> = {
   ncsc_gwp_ar5: "NCSC GWP(AR5)",
 }
 
-const PROJECTION_STATUS_LABELS: Record<string, string> = {
-  candidate: "可投影",
-  raw_only: "原始留存",
+const CONVERSION_STATUS_LABELS: Record<string, string> = {
+  candidate: "可转换",
+  raw_only: "仅原始保留",
+}
+
+const IMPORT_METHOD_LABELS: Record<string, string> = {
+  manual: "人工维护",
+  direct: "直接导入",
+  derived: "换算导入",
 }
 
 export function normalizeCarbonCode(value?: string | null) {
@@ -80,7 +86,12 @@ export function getSourceSystemLabel(sourceSystem?: string | null) {
   return SOURCE_SYSTEM_LABELS[sourceSystem] ?? sourceSystem
 }
 
-export function getProjectionStatusLabel(status?: string | null) {
+export function getConversionStatusLabel(status?: string | null) {
   if (!status) return "未标记"
-  return PROJECTION_STATUS_LABELS[status] ?? status
+  return CONVERSION_STATUS_LABELS[status] ?? status
+}
+
+export function getImportMethodLabel(status?: string | null) {
+  if (!status) return "未标记"
+  return IMPORT_METHOD_LABELS[status] ?? status
 }

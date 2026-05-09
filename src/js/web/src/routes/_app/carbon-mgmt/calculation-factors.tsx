@@ -17,7 +17,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import {
   getActivityUnitLabel,
   getCategoryLabel,
-  getProjectionStatusLabel,
+  getImportMethodLabel,
   getScopeLabel,
   getSourceSystemLabel,
   getSubCategoryLabel,
@@ -151,7 +151,7 @@ function CalculationFactorsPage() {
                     <TableHead>因子单位</TableHead>
                     <TableHead>年份</TableHead>
                     <TableHead>来源</TableHead>
-                    <TableHead>投影</TableHead>
+                    <TableHead>导入方式</TableHead>
                     <TableHead>状态</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -188,7 +188,7 @@ function CalculationFactorsPage() {
                       </TableCell>
                       <TableCell>
                         {factor.projection_status ? (
-                          <Badge variant="secondary">{getProjectionStatusLabel(factor.projection_status)}</Badge>
+                          <Badge variant="secondary">{getImportMethodLabel(factor.projection_status)}</Badge>
                         ) : (
                           <Badge variant="outline">未标记</Badge>
                         )}

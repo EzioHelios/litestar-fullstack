@@ -19,6 +19,7 @@ import { PageContainer, PageHeader, PageSection } from "@/components/ui/page-lay
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
+import { getConversionStatusLabel } from "@/lib/carbon-factor-labels"
 import { cn } from "@/lib/utils"
 
 type ImportBatch = {
@@ -105,9 +106,8 @@ function splitLibraryKey(key: string) {
 }
 
 function statusBadge(status?: string | null) {
-  if (status === "candidate") return <Badge>可投影</Badge>
-  if (status === "raw_only") return <Badge variant="secondary">原始留存</Badge>
-  return <Badge variant="outline">{status || "未标记"}</Badge>
+  if (!status) return <Badge variant="outline">未标记</Badge>
+  return <Badge variant={status === "candidate" ? "default" : "secondary"}>{getConversionStatusLabel(status)}</Badge>
 }
 
 function FactorsPage() {
@@ -290,12 +290,12 @@ function FactorsPage() {
                 }}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="投影状态" />
+                  <SelectValue placeholder="转换状态" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">全部状态</SelectItem>
-                  <SelectItem value="candidate">可投影</SelectItem>
-                  <SelectItem value="raw_only">原始留存</SelectItem>
+                  <SelectItem value="candidate">可转换</SelectItem>
+                  <SelectItem value="raw_only">仅原始保留</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -314,7 +314,7 @@ function FactorsPage() {
                     <TableHead>气体</TableHead>
                     <TableHead>地区</TableHead>
                     <TableHead>发布方</TableHead>
-                    <TableHead>状态</TableHead>
+                    <TableHead>转换状态</TableHead>
                     <TableHead className="text-right">操作</TableHead>
                   </TableRow>
                 </TableHeader>
