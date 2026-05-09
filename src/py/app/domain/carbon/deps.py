@@ -23,6 +23,10 @@ provide_scope2_electricity_bill_service = create_service_provider(services.Scope
 provide_scope3_waste_disposal_service = create_service_provider(services.Scope3WasteDisposalService)
 provide_scope3_third_party_transport_service = create_service_provider(services.Scope3ThirdPartyTransportService)
 provide_emission_factor_service = create_service_provider(services.EmissionFactorService)
+provide_carbon_factor_import_batch_service = create_service_provider(services.CarbonFactorImportBatchService)
+provide_carbon_factor_library_service = create_service_provider(services.CarbonFactorLibraryService)
+provide_carbon_factor_category_service = create_service_provider(services.CarbonFactorCategoryService)
+provide_carbon_factor_raw_record_service = create_service_provider(services.CarbonFactorRawRecordService)
 provide_iot_telemetry_service = create_service_provider(services.IotTelemetryService)
 provide_carbon_audit_log_service = create_service_provider(services.CarbonAuditLogService)
 provide_employee_commute_service = create_service_provider(services.EmployeeCommuteService)
@@ -34,6 +38,10 @@ __all__ = (
     "provide_ammeter_index_value_service",
     "provide_api_result_key_mapping_service",
     "provide_carbon_audit_log_service",
+    "provide_carbon_factor_category_service",
+    "provide_carbon_factor_import_batch_service",
+    "provide_carbon_factor_library_service",
+    "provide_carbon_factor_raw_record_service",
     "provide_emission_factor_service",
     "provide_employee_commute_service",
     "provide_energy_storage_value_service",

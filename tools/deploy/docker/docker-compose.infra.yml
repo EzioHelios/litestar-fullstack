@@ -2,7 +2,7 @@ services:
   cache:
     image: valkey/valkey:latest
     ports:
-      - "16379:6379"
+      - "18103:6379"
     hostname: cache
     command: redis-server --appendonly yes
     volumes:
@@ -25,7 +25,7 @@ services:
   db:
     image: postgres:latest
     ports:
-      - "15432:5432"
+      - "18102:5432"
     hostname: db
     environment:
       POSTGRES_PASSWORD: "app"
@@ -50,8 +50,8 @@ services:
   mailpit:
     image: axllent/mailpit:latest
     ports:
-      - "18025:8025"  # Web UI
-      - "11025:1025"  # SMTP server
+      - "18104:8025"  # Web UI
+      - "18105:1025"  # SMTP server
     hostname: mailpit
     restart: unless-stopped
     logging:
@@ -70,8 +70,8 @@ services:
   storage:
     image: rustfs/rustfs:latest
     ports:
-      - "19000:9000"   # S3 API
-      - "19001:9001"   # Web Console
+      - "18106:9000"   # S3 API
+      - "18107:9001"   # Web Console
     hostname: storage
     environment:
       RUSTFS_ACCESS_KEY: "app"
@@ -89,8 +89,10 @@ services:
       test:
         - CMD
         - curl
-        - -f
-        - http://localhost:9000/minio/health/live
+        - --silent
+        - --output
+        - /dev/null
+        - http://localhost:9000/
       interval: 10s
       timeout: 5s
       retries: 3

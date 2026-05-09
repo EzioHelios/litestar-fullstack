@@ -191,6 +191,48 @@ class EmissionFactorService(CompositeServiceMixin, service.SQLAlchemyAsyncReposi
     repository_type = Repo
 
 
+class CarbonFactorImportBatchService(
+    CompositeServiceMixin, service.SQLAlchemyAsyncRepositoryService[m.CarbonFactorImportBatch]
+):
+    """Handles database operations for CarbonFactorImportBatch."""
+
+    class Repo(repository.SQLAlchemyAsyncRepository[m.CarbonFactorImportBatch]):
+        """CarbonFactorImportBatch SQLAlchemy Repository."""
+        model_type = m.CarbonFactorImportBatch
+
+    repository_type = Repo
+
+
+class CarbonFactorLibraryService(CompositeServiceMixin, service.SQLAlchemyAsyncRepositoryService[m.CarbonFactorLibrary]):
+    """Handles database operations for CarbonFactorLibrary."""
+
+    class Repo(repository.SQLAlchemyAsyncRepository[m.CarbonFactorLibrary]):
+        """CarbonFactorLibrary SQLAlchemy Repository."""
+        model_type = m.CarbonFactorLibrary
+
+    repository_type = Repo
+
+
+class CarbonFactorCategoryService(CompositeServiceMixin, service.SQLAlchemyAsyncRepositoryService[m.CarbonFactorCategory]):
+    """Handles database operations for CarbonFactorCategory."""
+
+    class Repo(repository.SQLAlchemyAsyncRepository[m.CarbonFactorCategory]):
+        """CarbonFactorCategory SQLAlchemy Repository."""
+        model_type = m.CarbonFactorCategory
+
+    repository_type = Repo
+
+
+class CarbonFactorRawRecordService(CompositeServiceMixin, service.SQLAlchemyAsyncRepositoryService[m.CarbonFactorRawRecord]):
+    """Handles database operations for CarbonFactorRawRecord."""
+
+    class Repo(repository.SQLAlchemyAsyncRepository[m.CarbonFactorRawRecord]):
+        """CarbonFactorRawRecord SQLAlchemy Repository."""
+        model_type = m.CarbonFactorRawRecord
+
+    repository_type = Repo
+
+
 class IotTelemetryService(CompositeServiceMixin, service.SQLAlchemyAsyncRepositoryService[m.IotTelemetry]):
     """Handles database operations for IotTelemetry."""
 

@@ -52,10 +52,11 @@ class ApplicationCore(InitPluginProtocol, CLIPluginProtocol):
     app_slug: str
 
     def on_cli_init(self, cli: Group) -> None:
-        from app.cli.commands import user_management_group
+        from app.cli.commands import carbon_management_group, user_management_group
 
         settings = get_settings()
         self.app_slug = settings.app.slug
+        cli.add_command(carbon_management_group)
         cli.add_command(user_management_group)
 
     def on_app_init(self, app_config: AppConfig) -> AppConfig:

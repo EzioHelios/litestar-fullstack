@@ -1,5 +1,4 @@
-"""
-碳管理相关接口控制器（Litestar Controller）。
+"""碳管理相关接口控制器（Litestar Controller）。
 
 目标：
 - 尽量与原 Django `dataapp.urls` / `views` 提供的 `/api/...` 路径兼容
@@ -7,14 +6,14 @@
 """
 
 import datetime
-from datetime import timezone
-from typing import TYPE_CHECKING, Any
+import re
+from typing import Any
 
 from dateutil.relativedelta import MO, relativedelta
 from litestar import Controller, delete, get, patch, post
 from litestar.params import Body
 from litestar.response import Response
-from sqlalchemy import select, text
+from sqlalchemy import func, or_, select, text
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -23,23 +22,28 @@ from app.db import models as m
 from app.domain.carbon.deps import (
     provide_alarm_event_service,
     provide_api_result_key_mapping_service,
+    provide_carbon_audit_log_service,
+    provide_emission_factor_service,
+    provide_employee_commute_service,
     provide_enterprise_info_service,
+    provide_iot_telemetry_service,
     provide_monitor_equipment_service,
     provide_monitor_sector_service,
+    provide_scope1_mobile_combustion_service,
+    provide_scope1_refrigerant_leak_service,
+    provide_scope1_stationary_combustion_service,
+    provide_scope2_electricity_bill_service,
+    provide_scope3_third_party_transport_service,
+    provide_scope3_waste_disposal_service,
     provide_vedio_alarm_event_service,
     provide_video_monitor_service,
-    provide_scope1_mobile_combustion_service,
-    provide_scope1_stationary_combustion_service,
-    provide_scope1_refrigerant_leak_service,
-    provide_scope2_electricity_bill_service,
-    provide_scope3_waste_disposal_service,
-    provide_scope3_third_party_transport_service,
-    provide_employee_commute_service,
-    provide_emission_factor_service,
-    provide_iot_telemetry_service,
-    provide_carbon_audit_log_service,
 )
+
 from . import services
+from .utils import _CKYQZMJ as CKYQZMJ
+
+# 排放因子与常量（根据 Django views.py 同步）
+from .utils import GF_CJPL_PFYZ, YD_CPFL_PFYZ, calc_day_ygtq_cpfl
 from .validation import (
     CarbonValidationError,
     validate_amount_non_negative,
@@ -48,9 +52,6 @@ from .validation import (
     validate_date_not_future,
     validate_period_start_end,
 )
-
-# 排放因子与常量（根据 Django views.py 同步）
-from .utils import YD_CPFL_PFYZ, GF_CJPL_PFYZ, _CKYQZMJ as CKYQZMJ, _CKCCMJ as CKCCMJ, calc_day_ygtq_cpfl
 
 
 def _handle_db_view_error(_request: Any, exc: Exception) -> Response[dict[str, Any]]:
@@ -118,7 +119,7 @@ class CarbonDashboardController(Controller):
         result = await db_session.execute(text(sql))
         row = result.fetchone()
         headers = ["yd_day_lj_zygdn", "yd_week_lj_zygdn", "yd_month_lj_zygdn", "yd_year_lj_zygdn"]
-        return dict(zip(headers, [float(x) if x is not None else 0.0 for x in row])) if row else {h: 0.0 for h in headers}
+        return dict(zip(headers, [float(x) if x is not None else 0.0 for x in row])) if row else dict.fromkeys(headers, 0.0)
 
     @staticmethod
     async def _get_common_gffd_statis(db_session: AsyncSession) -> dict:
@@ -138,7 +139,7 @@ class CarbonDashboardController(Controller):
         result = await db_session.execute(text(sql))
         row = result.fetchone()
         headers = ["gf_day_lj_nygdnsz", "gf_week_lj_nygdnsz", "gf_month_lj_nygdnsz", "gf_year_lj_nygdnsz"]
-        return dict(zip(headers, [float(x) if x is not None else 0.0 for x in row])) if row else {h: 0.0 for h in headers}
+        return dict(zip(headers, [float(x) if x is not None else 0.0 for x in row])) if row else dict.fromkeys(headers, 0.0)
 
     @staticmethod
     async def _get_common_cdzyd_statis(db_session: AsyncSession) -> dict:
@@ -158,7 +159,7 @@ class CarbonDashboardController(Controller):
         result = await db_session.execute(text(sql))
         row = result.fetchone()
         headers = ["cdz_day_lj_zygdnsz", "cdz_week_lj_zygdnsz", "cdz_month_lj_zygdnsz", "cdz_year_lj_zygdnsz"]
-        return dict(zip(headers, [float(x) if x is not None else 0.0 for x in row])) if row else {h: 0.0 for h in headers}
+        return dict(zip(headers, [float(x) if x is not None else 0.0 for x in row])) if row else dict.fromkeys(headers, 0.0)
 
     @staticmethod
     async def _get_common_fdyd_statis_for_chart(db_session: AsyncSession, stat_type: str) -> list[dict]:
@@ -175,7 +176,7 @@ class CarbonDashboardController(Controller):
             sql = f"select a.day, to_char(a.day, 'DD日'), zygdn, nygdnsz2, (zygdn - nygdnsz2) from yj_day_sum_view a left join hw_gf_day_sum_view b on a.day = b.day where a.day>='{sm}' and a.day <='{em}'"
         else:
             sql = f"select a.month, to_char(a.month,'MM月'), zygdn, nygdnsz2, (zygdn - nygdnsz2) from yj_month_sum_view a left join hw_gf_month_sum_view b on a.month = b.month where extract(year from a.month) = {today.year}"
-        
+
         result = await db_session.execute(text(sql))
         rows = result.fetchall()
         headers = ["dt", "human_dt", "ydl", "fdl", "wgdl"]
@@ -206,8 +207,8 @@ class CarbonDashboardController(Controller):
     async def get_page1_ydfdzl(self, db_session: AsyncSession, stat_type: str = "day") -> Response[dict]:
         yj_table, gf_table = f"yj_{stat_type}_sum_view", f"hw_gf_{stat_type}_sum_view"
         today = datetime.date.today()
-        where = f"day='{today}'" if stat_type == 'day' else (f"week='{today - relativedelta(weekday=MO(-1))}'" if stat_type == 'week' else (f"month='{today.replace(day=1)}'" if stat_type == 'month' else f"year={today.year}"))
-        
+        where = f"day='{today}'" if stat_type == "day" else (f"week='{today - relativedelta(weekday=MO(-1))}'" if stat_type == "week" else (f"month='{today.replace(day=1)}'" if stat_type == "month" else f"year={today.year}"))
+
         sql_yd = f"select zygdn, zygdn_ratio from {yj_table} where {where}"
         res_yd = await db_session.execute(text(sql_yd))
         r_yd = res_yd.fetchone()
@@ -217,23 +218,23 @@ class CarbonDashboardController(Controller):
         res_fd = await db_session.execute(text(sql_fd))
         r_fd = res_fd.fetchone()
         ret_fd = {f"fdl_{stat_type}_value": r_fd[0] if r_fd and r_fd[0] else 0, f"fdl_{stat_type}_ratio": r_fd[1] * 100 if r_fd and r_fd[1] else "-"}
-        
+
         return Response(content={"code": 200, "msg": "获取成功", "data": {**ret_yd, **ret_fd}})
 
     @get(path="/api/page1/ydfdzl/qypx/{stat_type:str}", exclude_from_auth=True)
     async def get_page1_ydfdzl_qy(self, db_session: AsyncSession, stat_type: str = "day") -> Response[dict]:
         yj_table, gf_table = f"yj_area_{stat_type}_sum_view", f"hw_gf_area_{stat_type}_sum_view"
         today = datetime.date.today()
-        where = f"day='{today}'" if stat_type == 'day' else (f"week='{today - relativedelta(weekday=MO(-1))}'" if stat_type == 'week' else (f"month='{today.replace(day=1)}'" if stat_type == 'month' else f"year={today.year}"))
-        
+        where = f"day='{today}'" if stat_type == "day" else (f"week='{today - relativedelta(weekday=MO(-1))}'" if stat_type == "week" else (f"month='{today.replace(day=1)}'" if stat_type == "month" else f"year={today.year}"))
+
         sql_yd = f"select area_id, area_name, zygdn from {yj_table} where {where} order by zygdn desc"
         res_yd = await db_session.execute(text(sql_yd))
-        ret_yds = [{"area_id": r[0], "area_name": r[1], "zygdn": float(r[2]) if r[2] else 0.0} for r in res_yd.fetchall() if r[0] != '29710']
-        
+        ret_yds = [{"area_id": r[0], "area_name": r[1], "zygdn": float(r[2]) if r[2] else 0.0} for r in res_yd.fetchall() if r[0] != "29710"]
+
         sql_fd = f"select area_id, area_name, nygdnsz2 from {gf_table} where {where} order by nygdnsz2 desc"
         res_fd = await db_session.execute(text(sql_fd))
         ret_fds = [{"area_id": r[0], "area_name": r[1], "nygdnsz2": float(r[2]) if r[2] else 0.0} for r in res_fd.fetchall()]
-        
+
         return Response(content={"code": 200, "msg": "获取成功", "data": {"yd": ret_yds, "fd": ret_fds}})
 
     @get(path="/api/page3/ydfdtj/chart/{stat_type:str}", exclude_from_auth=True)
@@ -260,7 +261,7 @@ class CarbonDashboardController(Controller):
     @staticmethod
     async def _get_common_cpf_zl(db_session: AsyncSession, stat_type: str = "day") -> dict:
         today = datetime.date.today()
-        where = f"a.day='{today}'" if stat_type == 'day' else (f"a.week='{today - relativedelta(weekday=MO(-1))}'" if stat_type == 'week' else (f"a.month='{today.replace(day=1)}'" if stat_type == 'month' else f"a.year={today.year}"))
+        where = f"a.day='{today}'" if stat_type == "day" else (f"a.week='{today - relativedelta(weekday=MO(-1))}'" if stat_type == "week" else (f"a.month='{today.replace(day=1)}'" if stat_type == "month" else f"a.year={today.year}"))
         table = f"yj_{stat_type}_sum_view"
         gf_table = f"hw_gf_{stat_type}_sum_view"
         sql = f"select zygdn, nygdnsz2 from {table} a left join {gf_table} b on a.{stat_type}=b.{stat_type} where {where}"
@@ -300,7 +301,7 @@ class CarbonDashboardController(Controller):
         ret = await self._get_common_cpf_zl(db_session, stat_type)
         ret["store_area"] = CKYQZMJ
         day_ygtq_cpfl = await calc_day_ygtq_cpfl(db_session)
-        factors = {'day': 1, 'week': 5, 'month': 22, 'year': 250}
+        factors = {"day": 1, "week": 5, "month": 22, "year": 250}
         ygtq_cpfl = day_ygtq_cpfl * factors.get(stat_type, 1)
         ret["ygtq_cpfl"] = round(ygtq_cpfl, 2)
         try:
@@ -326,10 +327,10 @@ class CarbonDashboardController(Controller):
     async def get_page4_cpfl_qy(self, db_session: AsyncSession, stat_type: str = "day") -> Response[dict]:
         yj_table = f"yj_area_{stat_type}_sum_view"
         today = datetime.date.today()
-        where = f"day='{today}'" if stat_type == 'day' else (f"week='{today - relativedelta(weekday=MO(-1))}'" if stat_type == 'week' else (f"month='{today.replace(day=1)}'" if stat_type == 'month' else f"year={today.year}"))
+        where = f"day='{today}'" if stat_type == "day" else (f"week='{today - relativedelta(weekday=MO(-1))}'" if stat_type == "week" else (f"month='{today.replace(day=1)}'" if stat_type == "month" else f"year={today.year}"))
         sql = f"select area_id, area_name, zygdn from {yj_table} where {where} order by zygdn desc"
         res = await db_session.execute(text(sql))
-        rets = [{"area_id": r[0], "area_name": r[1], "zygdn": r[2], "cpfl": round(float(r[2]) * YD_CPFL_PFYZ, 3) if r[2] else 0.0} for r in res.fetchall() if r[0] != '29710']
+        rets = [{"area_id": r[0], "area_name": r[1], "zygdn": r[2], "cpfl": round(float(r[2]) * YD_CPFL_PFYZ, 3) if r[2] else 0.0} for r in res.fetchall() if r[0] != "29710"]
         rets.sort(key=lambda x: x["cpfl"], reverse=True)
         return Response(content={"code": 200, "msg": "获取成功", "data": rets})
 
@@ -349,55 +350,55 @@ class CarbonDashboardController(Controller):
         mapping = await self._get_api_result_key_mapping(db_session)
         new_rets = []
         for r in rets:
-            yd_cpf = round(float(r['ydl']) * YD_CPFL_PFYZ, 3) if r['ydl'] else 0.0
-            gf_cjp = round(float(r['fdl']) * GF_CJPL_PFYZ, 3) if r['fdl'] else 0.0
-            new_rets.append({mapping.get('dt', 'dt'): r['dt'], mapping.get('human_dt', 'human_dt'): r['human_dt'], mapping.get('yd_cpf', 'yd_cpf'): yd_cpf, mapping.get('gf_cjp', 'gf_cjp'): gf_cjp, mapping.get('jpf', 'jpf'): round(yd_cpf - gf_cjp, 3)})
+            yd_cpf = round(float(r["ydl"]) * YD_CPFL_PFYZ, 3) if r["ydl"] else 0.0
+            gf_cjp = round(float(r["fdl"]) * GF_CJPL_PFYZ, 3) if r["fdl"] else 0.0
+            new_rets.append({mapping.get("dt", "dt"): r["dt"], mapping.get("human_dt", "human_dt"): r["human_dt"], mapping.get("yd_cpf", "yd_cpf"): yd_cpf, mapping.get("gf_cjp", "gf_cjp"): gf_cjp, mapping.get("jpf", "jpf"): round(yd_cpf - gf_cjp, 3)})
         return Response(content={"code": 200, "msg": "获取成功", "data": new_rets})
 
     @get(path="/api/page3/zjyj", exclude_from_auth=True)
     async def get_page3_zjyj(self, db_session: AsyncSession) -> Response[dict]:
         sql = "select id, COALESCE(name, '整个仓库'), case when event_type=1 then '设备故障' when event_type=2 then '用电异常' when event_type=3 then '发电异常' else '碳排放异常' end, to_char(event_time,'YYYY-MM-DD HH24:MI:SS'), event_desc, case when is_handle then '已处理' else '未处理' end from alarm_event_view where event_type in (1,2,3) and is_handle = false order by event_time desc limit 10"
         res = await db_session.execute(text(sql))
-        headers = ['id', '区域名称', '事件类型', '发生时间', '事件描述', '事件状态']
+        headers = ["id", "区域名称", "事件类型", "发生时间", "事件描述", "事件状态"]
         return Response(content={"code": 200, "msg": "获取成功", "data": [dict(zip(headers, r)) for r in res.fetchall()]})
 
     @get(path="/api/page3/latestyj", exclude_from_auth=True)
     async def get_page3_latestyj(self, db_session: AsyncSession) -> Response[dict]:
         sql = "select id, COALESCE(name, '整个仓库'), case when event_type=1 then '设备故障' when event_type=2 then '用电异常' when event_type=3 then '发电异常' else '碳排放异常' end, to_char(event_time,'YYYY-MM-DD HH24:MI:SS'), event_desc, case when is_handle then '已处理' else '未处理' end from alarm_event_view where event_type in (1,2,3) and is_handle = false order by event_time desc limit 10"
         res = await db_session.execute(text(sql))
-        headers = ['id', '区域名称', '事件类型', '发生时间', '事件描述', '事件状态']
+        headers = ["id", "区域名称", "事件类型", "发生时间", "事件描述", "事件状态"]
         return Response(content={"code": 200, "msg": "获取成功", "data": [dict(zip(headers, r)) for r in res.fetchall()]})
 
     @get(path="/api/page4/zjyj", exclude_from_auth=True)
     async def get_page4_zjyj(self, db_session: AsyncSession) -> Response[dict]:
         sql = "select id, COALESCE(name, '整个仓库'), '碳排放异常', to_char(event_time,'YYYY-MM-DD HH24:MI:SS'), event_desc, case when is_handle then '已处理' else '未处理' end from alarm_event_view where event_type = 4 and is_handle = false order by event_time desc limit 10"
         res = await db_session.execute(text(sql))
-        headers = ['id', '区域名称', '事件类型', '发生时间', '事件描述', '事件状态']
+        headers = ["id", "区域名称", "事件类型", "发生时间", "事件描述", "事件状态"]
         return Response(content={"code": 200, "msg": "获取成功", "data": [dict(zip(headers, r)) for r in res.fetchall()]})
 
     @get(path="/api/page4/latestyj", exclude_from_auth=True)
     async def get_page4_latestyj(self, db_session: AsyncSession) -> Response[dict]:
         sql = "select id, COALESCE(name, '整个仓库'), '碳排放异常', to_char(event_time,'YYYY-MM-DD HH24:MI:SS'), event_desc, case when is_handle then '已处理' else '未处理' end from alarm_event_view where event_type = 4 and is_handle = false order by event_time desc limit 10"
         res = await db_session.execute(text(sql))
-        headers = ['id', '区域名称', '事件类型', '发生时间', '事件描述', '事件状态']
+        headers = ["id", "区域名称", "事件类型", "发生时间", "事件描述", "事件状态"]
         return Response(content={"code": 200, "msg": "获取成功", "data": [dict(zip(headers, r)) for r in res.fetchall()]})
 
     @get(path="/api/page3/yjtj/qypx/{stat_type:str}", exclude_from_auth=True)
     async def get_page3_yjtj_2(self, db_session: AsyncSession, stat_type: str = "day") -> Response[dict]:
         today = datetime.date.today()
-        dt = today if stat_type == 'day' else (today - datetime.timedelta(days=today.weekday()))
+        dt = today if stat_type == "day" else (today - datetime.timedelta(days=today.weekday()))
         sql = f"select COALESCE(sector_id, 'P0'), COALESCE(name, '整个仓库'), count(*) as count from alarm_event_view where {stat_type}='{dt}' and event_type in (2,3) and is_handle = false group by sector_id, name order by count desc"
         res = await db_session.execute(text(sql))
-        headers = ['区域ID', '区域名', '预警次数']
+        headers = ["区域ID", "区域名", "预警次数"]
         return Response(content={"code": 200, "msg": "获取成功", "data": [dict(zip(headers, r)) for r in res.fetchall()]})
 
     @get(path="/api/page4/yjtj/qypx/{stat_type:str}", exclude_from_auth=True)
     async def get_page4_yjtj_2(self, db_session: AsyncSession, stat_type: str = "day") -> Response[dict]:
         today = datetime.date.today()
-        dt = today if stat_type == 'day' else (today - datetime.timedelta(days=today.weekday()))
+        dt = today if stat_type == "day" else (today - datetime.timedelta(days=today.weekday()))
         sql = f"select COALESCE(sector_id, 'P0'), COALESCE(name, '整个仓库'), count(*) as count from alarm_event_view where {stat_type}='{dt}' and event_type = 4 and is_handle = false group by sector_id, name order by count desc"
         res = await db_session.execute(text(sql))
-        headers = ['区域ID', '区域名', '预警次数']
+        headers = ["区域ID", "区域名", "预警次数"]
         return Response(content={"code": 200, "msg": "获取成功", "data": [dict(zip(headers, r)) for r in res.fetchall()]})
 
     @staticmethod
@@ -686,7 +687,7 @@ class CarbonEventController(Controller):
             return m.VedioAlarmEvent(
                 event_type=event_type,
                 event_desc=event_desc,
-                event_time=event_time or datetime.datetime.now(datetime.timezone.utc),
+                event_time=event_time or datetime.datetime.now(datetime.UTC),
                 equipment_id=vm.id if vm else None,
                 is_handle=False,
             )
@@ -759,34 +760,34 @@ class CarbonVideoController(Controller):
     @get(path="/api/page2/yjzl/{stat_type:str}", exclude_from_auth=True)
     async def get_page2_yjzl(self, db_session: AsyncSession, stat_type: str = "day") -> Response[dict]:
         today = datetime.date.today()
-        dt = today if stat_type == 'day' else (today - datetime.timedelta(days=today.weekday()))
+        dt = today if stat_type == "day" else (today - datetime.timedelta(days=today.weekday()))
         res = await db_session.execute(text(f"select count(1) from vedio_alarm_event_view where {stat_type}='{dt}' and is_handle = false"))
         return Response(content={"code": 200, "msg": "获取成功", "data": {"total_alarm_count": res.scalar(), "qyyj": [], "lxyj": []}})
 
     @get(path="/api/page2/spgl", exclude_from_auth=True)
     async def get_page2_spgl(self, db_session: AsyncSession) -> Response[dict]:
         res = await db_session.execute(text("select status, count(*) from dataapp_videomonitor group by status"))
-        mapping = {0: '在线', 1: '故障'}
-        data = [{"id": i+1, "name": mapping.get(r[0], '未知'), "num": r[1]} for i, r in enumerate(res.fetchall())]
+        mapping = {0: "在线", 1: "故障"}
+        data = [{"id": i+1, "name": mapping.get(r[0], "未知"), "num": r[1]} for i, r in enumerate(res.fetchall())]
         return Response(content={"code": 200, "msg": "获取成功", "data": data})
 
     @get(path="/api/page2/spjk", exclude_from_auth=True)
     async def get_page2_spjk(self, db_session: AsyncSession) -> Response[dict]:
         res = await db_session.execute(text("select location, status, f_area from dataapp_videomonitor"))
-        mapping = {0: '在线', 1: '故障'}
+        mapping = {0: "在线", 1: "故障"}
         data = [{"location": r[0], "status": r[1], "status_name": mapping.get(r[1]), "f_area": r[2]} for r in res.fetchall()]
         return Response(content={"code": 200, "msg": "获取成功", "data": data})
 
     @get(path="/api/page2/zjyj", exclude_from_auth=True)
     async def get_page2_zjyj(self, db_session: AsyncSession) -> Response[dict]:
         res = await db_session.execute(text("select id, location, case when event_type=1 then '未佩戴安全帽' when event_type=2 then '烟火' when event_type=3 then '火点' else '区域入侵' end, to_char(event_time,'YYYY-MM-DD HH24:MI'), event_desc, case when is_handle then '已处理' else '未处理' end from vedio_alarm_event_view where is_handle=false order by event_time desc limit 10"))
-        headers = ['id', '监控位置', '事件类型', '发生时间', '事件描述', '事件状态']
+        headers = ["id", "监控位置", "事件类型", "发生时间", "事件描述", "事件状态"]
         return Response(content={"code": 200, "msg": "获取成功", "data": [dict(zip(headers, r)) for r in res.fetchall()]})
 
     @get(path="/api/page2/latestyj", exclude_from_auth=True)
     async def get_page2_latestyj(self, db_session: AsyncSession) -> Response[dict]:
         res = await db_session.execute(text("select id, location, case when event_type=1 then '未佩戴安全帽' when event_type=2 then '烟火' when event_type=3 then '火点' else '区域入侵' end, to_char(event_time,'YYYY-MM-DD HH24:MI'), event_desc, case when is_handle then '已处理' else '未处理' end from vedio_alarm_event_view where is_handle=false order by event_time desc limit 10"))
-        headers = ['id', '监控位置', '事件类型', '发生时间', '事件描述', '事件状态']
+        headers = ["id", "监控位置", "事件类型", "发生时间", "事件描述", "事件状态"]
         return Response(content={"code": 200, "msg": "获取成功", "data": [dict(zip(headers, r)) for r in res.fetchall()]})
 
     @get(path="/api/map/vedio/popup/{vid:int}", exclude_from_auth=True)
@@ -863,6 +864,55 @@ def model_to_dict(obj: Any) -> dict:
             val = str(val)
         result[c.name] = val
     return result
+
+
+_FACTOR_UNIT_PATTERN = re.compile(r"(tC/TJ|TJ/万t|10⁴t|万t|tCO2|tCO₂|tC|kg|CH4|CH₄|CO2|CO₂|N2O|N₂O|%|m3|m³|Gg)", re.IGNORECASE)
+
+
+def _looks_like_factor_unit(value: str) -> bool:
+    return bool(_FACTOR_UNIT_PATTERN.search(value.strip()))
+
+
+def _augment_raw_factor_record_dict(data: dict[str, Any]) -> dict[str, Any]:
+    """Add display-oriented fields for matrix-style official raw factor records."""
+    if data.get("library_code") != "G04":
+        data["display_factor_name"] = data.get("factor_name")
+        data["display_factor_unit_raw"] = data.get("factor_unit_raw")
+        return data
+
+    raw_payload = data.get("raw_payload") if isinstance(data.get("raw_payload"), dict) else {}
+    row_cells = raw_payload.get("rowCells") if isinstance(raw_payload, dict) else []
+    row_cells = row_cells if isinstance(row_cells, list) else []
+    header = raw_payload.get("header") if isinstance(raw_payload, dict) else {}
+    header_value = str(header.get("value") or "").strip() if isinstance(header, dict) else ""
+    factor_value = str(data.get("factor_value_raw") or "").strip()
+
+    unit = data.get("factor_unit_raw")
+    dimensions: list[str] = []
+    for cell in row_cells:
+        if not isinstance(cell, dict):
+            continue
+        value = str(cell.get("value") or "").strip()
+        value_en = str(cell.get("valueEn") or "").strip()
+        for candidate in (value, value_en):
+            if candidate and not unit and _looks_like_factor_unit(candidate):
+                unit = candidate
+        if not value or value == factor_value or _looks_like_factor_unit(value):
+            continue
+        if value not in dimensions:
+            dimensions.append(value)
+
+    if header_value and header_value not in dimensions:
+        dimensions.append(header_value)
+
+    if dimensions:
+        data["display_factor_name"] = " - ".join(dimensions)
+        data["matrix_dimensions"] = dimensions
+    else:
+        data["display_factor_name"] = re.sub(r"\s*-\s*纵\d+\s*", " - ", str(data.get("factor_name") or "")).strip(" -")
+        data["matrix_dimensions"] = []
+    data["display_factor_unit_raw"] = unit
+    return data
 
 
 # 审核状态与审计动作（参考 xtck_deploy admin AuditActionMixin）
@@ -1041,7 +1091,7 @@ class CarbonCRUDController(Controller):
         if obj.status != STATUS_PENDING:
             return Response(content={"code": 400, "msg": "仅待审核可通过"}, status_code=400)
         # 数据库字段为 TIMESTAMP WITHOUT TIME ZONE，这里去掉 tzinfo，避免 asyncpg 报错
-        now = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None)
+        now = datetime.datetime.now(datetime.UTC).replace(tzinfo=None)
         await scope1_mobile_service.update(
             item_id=record_id,
             data={"status": STATUS_APPROVED, "approved_at": now},
@@ -1127,7 +1177,7 @@ class CarbonCRUDController(Controller):
             if "amount" in data:
                 validate_consumption(data["amount"], "消耗量")
             if "period_start" in data or "period_end" in data:
-                validate_period_start_end(data.get("period_start") or getattr(obj, "period_start"), data.get("period_end") or getattr(obj, "period_end"))
+                validate_period_start_end(data.get("period_start") or obj.period_start, data.get("period_end") or obj.period_end)
         except CarbonValidationError as e:
             return Response(content={"code": 400, "msg": str(e)}, status_code=400)
         await scope1_stationary_service.update(item_id=record_id, data=data, auto_commit=True)
@@ -1180,7 +1230,7 @@ class CarbonCRUDController(Controller):
             return Response(content={"code": 404, "msg": "记录不存在"}, status_code=404)
         if obj.status != STATUS_PENDING:
             return Response(content={"code": 400, "msg": "仅待审核可通过"}, status_code=400)
-        now = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None)
+        now = datetime.datetime.now(datetime.UTC).replace(tzinfo=None)
         await scope1_stationary_service.update(
             item_id=record_id,
             data={"status": STATUS_APPROVED, "approved_at": now},
@@ -1312,7 +1362,7 @@ class CarbonCRUDController(Controller):
             return Response(content={"code": 404, "msg": "记录不存在"}, status_code=404)
         if obj.status != STATUS_PENDING:
             return Response(content={"code": 400, "msg": "仅待审核可通过"}, status_code=400)
-        now = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None)
+        now = datetime.datetime.now(datetime.UTC).replace(tzinfo=None)
         await scope1_refrigerant_service.update(
             item_id=record_id,
             data={"status": STATUS_APPROVED, "approved_at": now},
@@ -1443,7 +1493,7 @@ class CarbonCRUDController(Controller):
             return Response(content={"code": 404, "msg": "记录不存在"}, status_code=404)
         if obj.status != STATUS_PENDING:
             return Response(content={"code": 400, "msg": "仅待审核可通过"}, status_code=400)
-        now = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None)
+        now = datetime.datetime.now(datetime.UTC).replace(tzinfo=None)
         await scope2_bill_service.update(
             item_id=record_id,
             data={"status": STATUS_APPROVED, "approved_at": now},
@@ -1575,7 +1625,7 @@ class CarbonCRUDController(Controller):
             return Response(content={"code": 404, "msg": "记录不存在"}, status_code=404)
         if obj.status != STATUS_PENDING:
             return Response(content={"code": 400, "msg": "仅待审核可通过"}, status_code=400)
-        now = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None)
+        now = datetime.datetime.now(datetime.UTC).replace(tzinfo=None)
         await scope3_waste_service.update(
             item_id=record_id,
             data={"status": STATUS_APPROVED, "approved_at": now},
@@ -1706,7 +1756,7 @@ class CarbonCRUDController(Controller):
             return Response(content={"code": 404, "msg": "记录不存在"}, status_code=404)
         if obj.status != STATUS_PENDING:
             return Response(content={"code": 400, "msg": "仅待审核可通过"}, status_code=400)
-        now = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None)
+        now = datetime.datetime.now(datetime.UTC).replace(tzinfo=None)
         await scope3_transport_service.update(
             item_id=record_id,
             data={"status": STATUS_APPROVED, "approved_at": now},
@@ -1779,50 +1829,274 @@ class CarbonCRUDController(Controller):
         items = await emission_factor_service.list()
         return Response(content={"code": 200, "data": [model_to_dict(i) for i in items]})
 
+    @get("/api/carbon/factor-library/overview", exclude_from_auth=True)
+    async def get_factor_library_overview(self, db_session: AsyncSession) -> Response[dict]:
+        """Official factor asset library overview."""
+        batch = (
+            await db_session.execute(
+                select(m.CarbonFactorImportBatch).order_by(m.CarbonFactorImportBatch.created_at.desc()).limit(1)
+            )
+        ).scalars().first()
+        library_count = await db_session.scalar(select(func.count()).select_from(m.CarbonFactorLibrary))
+        category_count = await db_session.scalar(select(func.count()).select_from(m.CarbonFactorCategory))
+        leaf_category_count = await db_session.scalar(
+            select(func.count()).select_from(m.CarbonFactorCategory).where(m.CarbonFactorCategory.is_leaf == True)
+        )
+        raw_record_count = await db_session.scalar(select(func.count()).select_from(m.CarbonFactorRawRecord))
+        projection_candidate_count = await db_session.scalar(
+            select(func.count())
+            .select_from(m.CarbonFactorRawRecord)
+            .where(m.CarbonFactorRawRecord.projection_status == "candidate")
+        )
+        calculation_factor_count = await db_session.scalar(select(func.count()).select_from(m.EmissionFactor))
+        libraries = (
+            await db_session.execute(
+                select(m.CarbonFactorLibrary).order_by(
+                    m.CarbonFactorLibrary.library_year.desc(),
+                    m.CarbonFactorLibrary.library_code.asc(),
+                )
+            )
+        ).scalars().all()
+        data = {
+            "batch": model_to_dict(batch) if batch else None,
+            "library_count": library_count or 0,
+            "category_count": category_count or 0,
+            "leaf_category_count": leaf_category_count or 0,
+            "raw_record_count": raw_record_count or 0,
+            "projection_candidate_count": projection_candidate_count or 0,
+            "calculation_factor_count": calculation_factor_count or 0,
+            "libraries": [model_to_dict(item) for item in libraries],
+        }
+        return Response(content={"code": 200, "msg": "获取成功", "data": data})
+
+    @get("/api/carbon/factor-library/records", exclude_from_auth=True)
+    async def list_factor_library_records(
+        self,
+        db_session: AsyncSession,
+        keyword: str | None = None,
+        library_code: str | None = None,
+        library_year: str | None = None,
+        top_category: str | None = None,
+        category_path_prefix: str | None = None,
+        projection_status: str | None = None,
+        limit: int = 50,
+        offset: int = 0,
+    ) -> Response[dict]:
+        """Search source-native factor records with pagination."""
+        filters = []
+        if library_code and library_code != "all":
+            filters.append(m.CarbonFactorRawRecord.library_code == library_code)
+        if library_year and library_year != "all":
+            filters.append(m.CarbonFactorRawRecord.library_year == library_year)
+        if top_category and top_category != "all":
+            filters.append(m.CarbonFactorRawRecord.top_category == top_category)
+        if category_path_prefix and category_path_prefix != "all":
+            category_prefix = category_path_prefix.strip()
+            filters.append(
+                or_(
+                    m.CarbonFactorRawRecord.category_path == category_prefix,
+                    m.CarbonFactorRawRecord.category_path.ilike(f"{category_prefix} /%"),
+                )
+            )
+        if projection_status and projection_status != "all":
+            filters.append(m.CarbonFactorRawRecord.projection_status == projection_status)
+        if keyword:
+            pattern = f"%{keyword.strip()}%"
+            filters.append(
+                or_(
+                    m.CarbonFactorRawRecord.factor_name.ilike(pattern),
+                    m.CarbonFactorRawRecord.category_path.ilike(pattern),
+                    m.CarbonFactorRawRecord.factor_unit_raw.ilike(pattern),
+                    m.CarbonFactorRawRecord.provider.ilike(pattern),
+                )
+            )
+
+        limit_clamped = max(10, min(limit, 200))
+        offset_clamped = max(0, offset)
+        total_stmt = select(func.count()).select_from(m.CarbonFactorRawRecord)
+        rows_stmt = select(m.CarbonFactorRawRecord).order_by(m.CarbonFactorRawRecord.id.desc()).limit(limit_clamped).offset(offset_clamped)
+        for item_filter in filters:
+            total_stmt = total_stmt.where(item_filter)
+            rows_stmt = rows_stmt.where(item_filter)
+
+        total = await db_session.scalar(total_stmt)
+        rows = (await db_session.execute(rows_stmt)).scalars().all()
+        return Response(
+            content={
+                "code": 200,
+                "msg": "获取成功",
+                "data": {
+                    "items": [_augment_raw_factor_record_dict(model_to_dict(item)) for item in rows],
+                    "total": total or 0,
+                    "limit": limit_clamped,
+                    "offset": offset_clamped,
+                },
+            }
+        )
+
+    @get("/api/carbon/factor-library/records/{record_id:int}", exclude_from_auth=True)
+    async def get_factor_library_record(self, db_session: AsyncSession, record_id: int) -> Response[dict]:
+        item = await db_session.get(m.CarbonFactorRawRecord, record_id)
+        if item is None:
+            return Response(content={"code": 404, "msg": "记录不存在", "data": None}, status_code=404)
+        return Response(content={"code": 200, "msg": "获取成功", "data": _augment_raw_factor_record_dict(model_to_dict(item))})
+
+    @get("/api/carbon/factor-library/categories", exclude_from_auth=True)
+    async def list_factor_library_categories(
+        self,
+        db_session: AsyncSession,
+        library_code: str | None = None,
+        library_year: str | None = None,
+    ) -> Response[dict]:
+        stmt = select(m.CarbonFactorCategory).order_by(
+            m.CarbonFactorCategory.library_year.desc(),
+            m.CarbonFactorCategory.library_code.asc(),
+            m.CarbonFactorCategory.category_path.asc(),
+        )
+        if library_code and library_code != "all":
+            stmt = stmt.where(m.CarbonFactorCategory.library_code == library_code)
+        if library_year and library_year != "all":
+            stmt = stmt.where(m.CarbonFactorCategory.library_year == library_year)
+        rows = (await db_session.execute(stmt)).scalars().all()
+        return Response(content={"code": 200, "msg": "获取成功", "data": [model_to_dict(item) for item in rows]})
+
+    @get("/api/carbon/factor-library/category-tree", exclude_from_auth=True)
+    async def get_factor_library_category_tree(self, db_session: AsyncSession) -> Response[dict]:
+        """Return category data as library-grouped expandable trees."""
+        libraries = (
+            await db_session.execute(
+                select(m.CarbonFactorLibrary).order_by(
+                    m.CarbonFactorLibrary.library_year.desc(),
+                    m.CarbonFactorLibrary.library_code.asc(),
+                )
+            )
+        ).scalars().all()
+        categories = (
+            await db_session.execute(
+                select(m.CarbonFactorCategory).order_by(
+                    m.CarbonFactorCategory.library_year.desc(),
+                    m.CarbonFactorCategory.library_code.asc(),
+                    m.CarbonFactorCategory.depth.asc(),
+                )
+            )
+        ).scalars().all()
+
+        nodes_by_id: dict[str, dict[str, Any]] = {}
+        roots_by_library: dict[tuple[str | None, str | None], list[dict[str, Any]]] = {}
+        for category in categories:
+            raw_payload = category.raw_payload if isinstance(category.raw_payload, dict) else {}
+            node = {
+                "id": category.id,
+                "source_category_id": category.source_category_id,
+                "parent_source_category_id": category.parent_source_category_id,
+                "category_code": raw_payload.get("code"),
+                "library_year": category.library_year,
+                "library_code": category.library_code,
+                "category_name": category.category_name,
+                "category_path": category.category_path,
+                "depth": category.depth,
+                "is_leaf": category.is_leaf,
+                "children": [],
+                "_sort_num": raw_payload.get("sortNum"),
+            }
+            nodes_by_id[category.source_category_id] = node
+
+        for category in categories:
+            node = nodes_by_id[category.source_category_id]
+            parent_id = category.parent_source_category_id
+            if parent_id and parent_id != "-1" and parent_id in nodes_by_id:
+                nodes_by_id[parent_id]["children"].append(node)
+            else:
+                roots_by_library.setdefault((category.library_year, category.library_code), []).append(node)
+
+        def sort_nodes(nodes: list[dict[str, Any]]) -> None:
+            def sort_key(node: dict[str, Any]) -> tuple[int, str, str]:
+                sort_num = node.get("_sort_num")
+                sort_rank = sort_num if isinstance(sort_num, int) else 9999
+                return (sort_rank, str(node.get("category_code") or ""), str(node.get("category_name") or ""))
+
+            nodes.sort(key=sort_key)
+            for node in nodes:
+                sort_nodes(node["children"])
+                node.pop("_sort_num", None)
+
+        for roots in roots_by_library.values():
+            sort_nodes(roots)
+
+        known_library_keys = {(library.library_year, library.library_code) for library in libraries}
+        category_counts: dict[tuple[str | None, str | None], int] = {}
+        for category in categories:
+            key = (category.library_year, category.library_code)
+            category_counts[key] = category_counts.get(key, 0) + 1
+
+        groups = [
+            {
+                "library_year": library.library_year,
+                "library_code": library.library_code,
+                "library_name": library.library_name,
+                "institution": library.institution,
+                "category_count": category_counts.get((library.library_year, library.library_code), 0),
+                    "children": roots_by_library.get((library.library_year, library.library_code), []),
+            }
+            for library in libraries
+        ]
+        for (library_year, library_code), roots in roots_by_library.items():
+            if (library_year, library_code) not in known_library_keys:
+                groups.append(
+                    {
+                        "library_year": library_year,
+                        "library_code": library_code,
+                        "library_name": f"{library_year or ''} {library_code or ''}".strip(),
+                        "institution": None,
+                        "category_count": category_counts.get((library_year, library_code), 0),
+                        "children": roots,
+                    }
+                )
+
+        return Response(content={"code": 200, "msg": "获取成功", "data": {"groups": groups}})
+
     @get("/api/carbon/iot-telemetry", exclude_from_auth=True)
     async def list_iot_telemetry(
         self,
-        iot_telemetry_service: services.IotTelemetryService,
+        db_session: AsyncSession,
         site_id: str | None = None,
         device_id: str | None = None,
         limit: int = 200,
     ) -> Response[dict]:
         """IoT 时序数据简单列表查询（主要用于前端检索和排查）。"""
         filters = []
-        model = iot_telemetry_service.repository.model_type
+        model = m.IotTelemetry
         if site_id:
             filters.append(model.site_id == site_id)
         if device_id:
             filters.append(model.device_id == device_id)
         limit_clamped = max(10, min(limit, 1000))
-        items = await iot_telemetry_service.list(
-            *filters,
-            order_by=[model.reading_time.desc()],
-            limit=limit_clamped,
-        )
+        stmt = select(model).order_by(model.reading_time.desc()).limit(limit_clamped)
+        if filters:
+            stmt = stmt.where(*filters)
+        items = (await db_session.execute(stmt)).scalars().all()
         return Response(content={"code": 200, "data": [model_to_dict(i) for i in items]})
 
     @get("/api/carbon/audit-logs", exclude_from_auth=True)
     async def list_carbon_audit_logs(
         self,
-        audit_log_service: services.CarbonAuditLogService,
+        db_session: AsyncSession,
         record_type: str | None = None,
         action: str | None = None,
         limit: int = 200,
     ) -> Response[dict]:
         """碳业务审核操作日志列表（按时间倒序）。"""
         filters = []
-        model = audit_log_service.repository.model_type
+        model = m.CarbonAuditLog
         if record_type:
             filters.append(model.record_type == record_type)
         if action:
             filters.append(model.action == action)
         limit_clamped = max(10, min(limit, 1000))
-        items = await audit_log_service.list(
-            *filters,
-            order_by=[model.created_at.desc()],
-            limit=limit_clamped,
-        )
+        stmt = select(model).order_by(model.created_at.desc()).limit(limit_clamped)
+        if filters:
+            stmt = stmt.where(*filters)
+        items = (await db_session.execute(stmt)).scalars().all()
         return Response(content={"code": 200, "data": [model_to_dict(i) for i in items]})
 
     @get("/api/carbon/pending", exclude_from_auth=True)
@@ -1848,7 +2122,7 @@ class CarbonCRUDController(Controller):
             items = await svc.list()
             for i in items:
                 if getattr(i, "status", None) == STATUS_PENDING:
-                    out.append({"record_type": name, "record_id": getattr(i, "id"), **model_to_dict(i)})
+                    out.append({"record_type": name, "record_id": i.id, **model_to_dict(i)})
         return Response(content={"code": 200, "data": out})
 
     # ---------- 数据管理：员工通勤 ----------

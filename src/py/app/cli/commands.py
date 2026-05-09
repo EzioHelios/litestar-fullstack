@@ -17,6 +17,8 @@ from app.db.models import Role, UserRole
 from app.domain.accounts.deps import provide_users_service
 from app.domain.accounts.schemas import UserCreate, UserUpdate
 from app.domain.accounts.services import RoleService, UserService
+from app.domain.carbon.calculation_factor_importer import import_calculation_factor_checklist
+from app.domain.carbon.factor_importer import import_ncsc_factor_package
 from app.lib.deps import create_service_provider, provide_services
 from app.lib.settings import get_settings
 
@@ -25,6 +27,12 @@ from app.lib.settings import get_settings
 @click.pass_context
 def user_management_group(_: dict[str, Any]) -> None:
     """Manage application users."""
+
+
+@click.group(name="carbon", invoke_without_command=False, help="Manage carbon data assets.")
+@click.pass_context
+def carbon_management_group(_: dict[str, Any]) -> None:
+    """Manage carbon data assets."""
 
 
 async def load_database_fixtures() -> None:
@@ -195,3 +203,47 @@ def seed_admin() -> None:
 
     console.rule("Seeding default admin account.")
     anyio.run(_seed_admin)
+
+
+@carbon_management_group.command(name="import-ncsc-factors", help="Import an NCSC official factor package.")
+@click.argument("package_dir", type=click.Path(exists=True, file_okay=False, dir_okay=True, path_type=Path))
+def import_ncsc_factors(package_dir: Path) -> None:
+    """Import NCSC factor package into the source-neutral factor asset library."""
+    console = get_console()
+
+    async def _import() -> None:
+        async with alchemy.get_session() as session:
+            result = await import_ncsc_factor_package(session, package_dir)
+        console.print(
+            "[green]Imported factor package[/green] "
+            f"snapshot={result.snapshot_id} source={result.source_system} "
+            f"checksum={'ok' if result.checksum_verified else 'failed'} "
+            f"libraries={result.libraries} categories={result.categories} "
+            f"records={result.raw_records} candidates={result.projection_candidates}"
+        )
+
+    console.rule("Import NCSC official factor package.")
+    anyio.run(_import)
+
+
+@carbon_management_group.command(
+    name="import-calculation-factor-checklist",
+    help="Import a reusable calculation-factor checklist CSV into the calculation factor library.",
+)
+@click.argument("csv_path", type=click.Path(exists=True, file_okay=True, dir_okay=False, path_type=Path))
+def import_calculation_factor_checklist_command(csv_path: Path) -> None:
+    """Import a reusable calculation-factor checklist CSV."""
+    console = get_console()
+
+    async def _import() -> None:
+        async with alchemy.get_session() as session:
+            result = await import_calculation_factor_checklist(session, csv_path)
+        console.print(
+            "[green]Imported calculation factor checklist[/green] "
+            f"imported={result.imported} updated={result.updated} "
+            f"skipped_pending={result.skipped_pending} skipped_invalid={result.skipped_invalid} "
+            f"resolved_raw_records={result.resolved_raw_records}"
+        )
+
+    console.rule("Import calculation factor checklist.")
+    anyio.run(_import)

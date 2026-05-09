@@ -1,15 +1,24 @@
 from __future__ import annotations
 
 from datetime import date, datetime
-from typing import TYPE_CHECKING
 from uuid import UUID
 
 from advanced_alchemy.base import BigIntAuditBase, BigIntBase
-from sqlalchemy import Boolean, Date, DateTime, Float, ForeignKey, Integer, Numeric, String, Text
+from sqlalchemy import (
+    JSON,
+    Boolean,
+    Date,
+    DateTime,
+    Float,
+    ForeignKey,
+    Index,
+    Integer,
+    Numeric,
+    String,
+    Text,
+    UniqueConstraint,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-
-if TYPE_CHECKING:
-    from app.db.models import User
 
 
 class DataFeatureMixin:
@@ -63,7 +72,7 @@ class MonitorSector(BigIntBase):
     area_id: Mapped[int | None] = mapped_column(Integer)
     is_enable: Mapped[bool | None] = mapped_column(Boolean, default=True)
 
-    photos: Mapped[list["MonitorSectorPhoto"]] = relationship(
+    photos: Mapped[list[MonitorSectorPhoto]] = relationship(
         back_populates="sector",
         lazy="selectin",
     )
@@ -415,6 +424,120 @@ class EmissionFactor(BigIntAuditBase):
     source: Mapped[str] = mapped_column(String(128))
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     note: Mapped[str | None] = mapped_column(Text)
+    source_system: Mapped[str | None] = mapped_column(String(64), index=True)
+    source_snapshot_id: Mapped[str | None] = mapped_column(String(64), index=True)
+    raw_record_id: Mapped[int | None] = mapped_column(
+        ForeignKey("carbon_factor_raw_record.id", ondelete="SET NULL"),
+        index=True,
+    )
+    projection_status: Mapped[str | None] = mapped_column(String(24), default="manual")
+    review_status: Mapped[str | None] = mapped_column(String(24), default="approved")
+
+
+class CarbonFactorImportBatch(BigIntAuditBase):
+    """Official factor source import batch.
+
+    This is intentionally source-system neutral so NCSC, ecoinvent, IPCC, and local factor packs can share the
+    same governance surface while keeping their native payloads.
+    """
+
+    __tablename__ = "carbon_factor_import_batch"
+    __table_args__ = (
+        UniqueConstraint("source_system", "snapshot_id", name="uq_carbon_factor_batch_source_snapshot"),
+    )
+
+    snapshot_id: Mapped[str] = mapped_column(String(64), index=True)
+    package_name: Mapped[str | None] = mapped_column(String(255))
+    package_version: Mapped[str | None] = mapped_column(String(32))
+    package_type: Mapped[str | None] = mapped_column(String(64))
+    source_system: Mapped[str] = mapped_column(String(64), index=True)
+    source_url: Mapped[str | None] = mapped_column(String(512))
+    built_at: Mapped[datetime | None] = mapped_column(DateTime)
+    crawl_started_at: Mapped[datetime | None] = mapped_column(DateTime)
+    crawl_finished_at: Mapped[datetime | None] = mapped_column(DateTime)
+    is_complete: Mapped[bool] = mapped_column(Boolean, default=False)
+    checksum_verified: Mapped[bool] = mapped_column(Boolean, default=False)
+    import_status: Mapped[str] = mapped_column(String(24), default="imported")
+    library_count: Mapped[int] = mapped_column(Integer, default=0)
+    category_count: Mapped[int] = mapped_column(Integer, default=0)
+    leaf_category_count: Mapped[int] = mapped_column(Integer, default=0)
+    page_count: Mapped[int] = mapped_column(Integer, default=0)
+    record_count: Mapped[int] = mapped_column(Integer, default=0)
+    detail_count: Mapped[int] = mapped_column(Integer, default=0)
+    failure_count: Mapped[int] = mapped_column(Integer, default=0)
+    xlsx_count: Mapped[int] = mapped_column(Integer, default=0)
+    manifest_payload: Mapped[dict | None] = mapped_column(JSON)
+
+
+class CarbonFactorLibrary(BigIntAuditBase):
+    """A library/version inside a factor source, e.g. NCSC 2026 G02 or ecoinvent 3.x."""
+
+    __tablename__ = "carbon_factor_library"
+    __table_args__ = (
+        UniqueConstraint("source_system", "library_year", "library_code", name="uq_carbon_factor_library_source_year_code"),
+    )
+
+    source_system: Mapped[str] = mapped_column(String(64), index=True)
+    library_year: Mapped[str] = mapped_column(String(16), index=True)
+    library_code: Mapped[str] = mapped_column(String(32), index=True)
+    library_name: Mapped[str] = mapped_column(String(255))
+    institution: Mapped[str | None] = mapped_column(String(255))
+    source_pkid: Mapped[str | None] = mapped_column(String(64))
+    source_year_id: Mapped[str | None] = mapped_column(String(64))
+    raw_payload: Mapped[dict | None] = mapped_column(JSON)
+
+
+class CarbonFactorCategory(BigIntAuditBase):
+    """Source-native category tree with a flattened path for search and display."""
+
+    __tablename__ = "carbon_factor_category"
+    __table_args__ = (
+        UniqueConstraint("source_system", "source_category_id", name="uq_carbon_factor_category_source_id"),
+        Index("ix_carbon_factor_category_path", "category_path"),
+    )
+
+    source_system: Mapped[str] = mapped_column(String(64), index=True)
+    source_category_id: Mapped[str] = mapped_column(String(64), index=True)
+    parent_source_category_id: Mapped[str | None] = mapped_column(String(64), index=True)
+    library_year: Mapped[str | None] = mapped_column(String(16), index=True)
+    library_code: Mapped[str | None] = mapped_column(String(32), index=True)
+    category_name: Mapped[str] = mapped_column(String(255), index=True)
+    category_path: Mapped[str] = mapped_column(String(1024))
+    depth: Mapped[int] = mapped_column(Integer, default=0)
+    is_leaf: Mapped[bool] = mapped_column(Boolean, default=False)
+    raw_payload: Mapped[dict | None] = mapped_column(JSON)
+
+
+class CarbonFactorRawRecord(BigIntAuditBase):
+    """Source-native factor record preserved for audit, search, and later projection."""
+
+    __tablename__ = "carbon_factor_raw_record"
+    __table_args__ = (
+        UniqueConstraint("source_system", "snapshot_id", "stable_hash", name="uq_carbon_factor_raw_source_snapshot_hash"),
+        Index("ix_carbon_factor_raw_lookup", "source_system", "library_year", "library_code"),
+    )
+
+    snapshot_id: Mapped[str] = mapped_column(String(64), index=True)
+    source_system: Mapped[str] = mapped_column(String(64), index=True)
+    source_url: Mapped[str | None] = mapped_column(String(512))
+    library_year: Mapped[str | None] = mapped_column(String(16), index=True)
+    library_code: Mapped[str | None] = mapped_column(String(32), index=True)
+    library_name: Mapped[str | None] = mapped_column(String(255))
+    category_path: Mapped[str] = mapped_column(String(1024), index=True)
+    top_category: Mapped[str | None] = mapped_column(String(255), index=True)
+    second_category: Mapped[str | None] = mapped_column(String(255), index=True)
+    source_record_id: Mapped[str | None] = mapped_column(String(128), index=True)
+    stable_hash: Mapped[str] = mapped_column(String(64), index=True)
+    factor_name: Mapped[str] = mapped_column(String(1024), index=True)
+    factor_value_raw: Mapped[str | None] = mapped_column(Text)
+    factor_unit_raw: Mapped[str | None] = mapped_column(String(128), index=True)
+    region_raw: Mapped[str | None] = mapped_column(String(255), index=True)
+    gas_raw: Mapped[str | None] = mapped_column(String(64), index=True)
+    time_representativeness: Mapped[str | None] = mapped_column(String(128))
+    provider: Mapped[str | None] = mapped_column(String(255), index=True)
+    source_description: Mapped[str | None] = mapped_column(Text)
+    projection_status: Mapped[str] = mapped_column(String(24), default="raw_only", index=True)
+    raw_payload: Mapped[dict | None] = mapped_column(JSON)
 
 
 class IotTelemetry(BigIntBase):

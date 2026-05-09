@@ -2,7 +2,7 @@ services:
   cache:
     image: valkey/valkey:latest
     ports:
-      - "16379:6379"
+      - "18103:6379"
     hostname: cache
     command: redis-server --appendonly yes
     volumes:
@@ -25,7 +25,7 @@ services:
   db:
     image: postgres:latest
     ports:
-      - "15432:5432"
+      - "18102:5432"
     hostname: db
     environment:
       POSTGRES_PASSWORD: "app"
@@ -50,8 +50,8 @@ services:
   mailpit:
     image: axllent/mailpit:latest
     ports:
-      - "18025:8025"  # Web UI
-      - "11025:1025"  # SMTP server
+      - "18104:8025"  # Web UI
+      - "18105:1025"  # SMTP server
     hostname: mailpit
     restart: unless-stopped
     logging:
@@ -78,7 +78,7 @@ services:
       cache:
         condition: service_healthy
     ports:
-      - "8000:8000"
+      - "18100:8000"
     environment:
       VITE_DEV_MODE: "false"
       SAQ_USE_SERVER_LIFESPAN: "false"

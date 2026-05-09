@@ -273,14 +273,14 @@ infra-logs:                                        ## Tail infrastructure logs
 .PHONY: mailpit
 mailpit:                                           ## Open Mailpit web interface
 	@echo "${INFO} Opening Mailpit web interface... 📧"
-	@echo "${INFO} Mailpit UI: http://localhost:18025"
-	@echo "${INFO} SMTP Server: localhost:11025"
+	@echo "${INFO} Mailpit UI: http://localhost:18104"
+	@echo "${INFO} SMTP Server: localhost:18105"
 	@if command -v open >/dev/null 2>&1; then \
-		open http://localhost:18025; \
+		open http://localhost:18104; \
 	elif command -v xdg-open >/dev/null 2>&1; then \
-		xdg-open http://localhost:18025; \
+		xdg-open http://localhost:18104; \
 	else \
-		echo "${WARN} Please open http://localhost:18025 in your browser"; \
+		echo "${WARN} Please open http://localhost:18104 in your browser"; \
 	fi
 
 

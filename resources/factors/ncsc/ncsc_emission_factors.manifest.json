@@ -1,0 +1,100 @@
+{
+  "schemaVersion": 1,
+  "packageKey": "ncsc-ghg-efdb-litestar-fullstack-projection-20260503T133840Z-v1",
+  "generatedAt": "2026-05-08T13:28:05.290408+00:00",
+  "source": {
+    "repository": "backend-feat-energy",
+    "snapshotId": "20260503T133840Z",
+    "sourceSystem": "ncsc_ghg_efdb",
+    "sourceUrl": "https://data.ncsc.org.cn/factories/index",
+    "rawSnapshotComplete": true,
+    "rawLibraryCount": 5,
+    "rawCategoryCount": 821,
+    "rawLeafCategoryCount": 545,
+    "rawPageCount": 545,
+    "rawRecordCount": 1441,
+    "selectedLibraries": [
+      {
+        "year": "2025",
+        "code": "G01",
+        "name": "全国及地方碳排放因子",
+        "pkid": "1787792415488061442"
+      },
+      {
+        "year": "2025",
+        "code": "G02",
+        "name": "行业企业排放因子",
+        "pkid": "1787792415492255745"
+      },
+      {
+        "year": "2025",
+        "code": "G03",
+        "name": "产品碳足迹因子",
+        "pkid": "1787792415496450050"
+      },
+      {
+        "year": "2025",
+        "code": "G04",
+        "name": "温室气体清单因子",
+        "pkid": "1787792415496450051"
+      },
+      {
+        "year": "2026",
+        "code": "G02",
+        "name": "行业企业排放因子",
+        "pkid": "1823254278404255746"
+      }
+    ]
+  },
+  "target": {
+    "repository": "litestar-fullstack",
+    "model": "app.domain.carbon.models.EmissionFactor",
+    "table": "dataapp_emissionfactor",
+    "fields": [
+      "scope",
+      "category",
+      "sub_category",
+      "unit",
+      "factor_value",
+      "factor_unit",
+      "year",
+      "source",
+      "is_active",
+      "note"
+    ]
+  },
+  "projection": {
+    "strategy": "delivery_first_existing_table_projection",
+    "description": "Only direct CO2/CO2e factors that can be mapped to the existing EmissionFactor table are included. Official raw records remain outside this repository.",
+    "rules": [
+      "Keep NCSC raw snapshot outside litestar-fullstack; import only projected calculation factors.",
+      "Accept direct CO2/CO2e factors with parseable value and unit numerator/denominator.",
+      "Map purchased electricity/heat to scope2.",
+      "Map fuel combustion factors to scope1 fuel.",
+      "Skip CH4, N2O, carbon-content, oxidation-rate, percentage, process-only, and unparseable units.",
+      "Store traceability metadata as JSON text in note without changing the current table schema."
+    ],
+    "recordCount": 105,
+    "skippedCount": 1336,
+    "skipSummary": {
+      "not_projectable": 1336
+    },
+    "byScope": {
+      "scope1": 65,
+      "scope2": 40
+    },
+    "byCategory": {
+      "fuel": 65,
+      "electricity": 40
+    },
+    "byYearLibrary": {
+      "2025_G02": 28,
+      "2026_G02": 77
+    }
+  },
+  "files": {
+    "projectedRows": "ncsc_emission_factors.projected.json",
+    "manifest": "ncsc_emission_factors.manifest.json",
+    "migrationGuide": "MIGRATION_GUIDE.md"
+  }
+}

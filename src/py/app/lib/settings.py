@@ -434,7 +434,7 @@ class AppSettings:
         return CompressionConfig(backend="gzip")
 
     def get_cors_config(self) -> CORSConfig:
-        return CORSConfig(allow_origins=cast("list[str]", self.ALLOWED_CORS_ORIGINS))
+        return CORSConfig(allow_origins=cast("list[str]", self.ALLOWED_CORS_ORIGINS), allow_credentials=True)
 
     def get_problem_details_config(self) -> ProblemDetailsConfig:
         return ProblemDetailsConfig(enable_for_all_http_exceptions=True)
