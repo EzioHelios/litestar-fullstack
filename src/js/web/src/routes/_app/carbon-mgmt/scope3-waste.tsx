@@ -133,7 +133,7 @@ function Scope3WastePage() {
 
   return (
     <PageContainer className="flex-1 space-y-6">
-      <PageHeader eyebrow="碳排放管理" title="[Scope3] 废弃物处理" description="废弃物处理数据填报、审核流转与记录管理。" />
+      <PageHeader eyebrow="碳排放管理" title="[范围3] 废弃物处理" description="废弃物处理数据填报、审核流转与记录管理。" />
 
       <PageSection>
         <Card>

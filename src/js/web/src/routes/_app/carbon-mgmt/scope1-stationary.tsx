@@ -152,7 +152,7 @@ function Scope1StationaryPage() {
 
   return (
     <PageContainer className="flex-1 space-y-6">
-      <PageHeader eyebrow="碳排放管理" title="[Scope1] 固定源燃烧" description="固定源燃烧数据填报、审核流转与记录管理。" />
+      <PageHeader eyebrow="碳排放管理" title="[范围1] 固定源燃烧" description="固定源燃烧数据填报、审核流转与记录管理。" />
 
       <PageSection>
         <Card>

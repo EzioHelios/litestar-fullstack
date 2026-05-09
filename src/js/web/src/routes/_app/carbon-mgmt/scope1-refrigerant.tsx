@@ -134,7 +134,7 @@ function Scope1RefrigerantPage() {
 
   return (
     <PageContainer className="flex-1 space-y-6">
-      <PageHeader eyebrow="碳排放管理" title="[Scope1] 制冷剂逸散" description="制冷剂填充/泄漏数据填报、审核流转与记录管理。" />
+      <PageHeader eyebrow="碳排放管理" title="[范围1] 制冷剂逸散" description="制冷剂填充/泄漏数据填报、审核流转与记录管理。" />
 
       <PageSection>
         <Card>

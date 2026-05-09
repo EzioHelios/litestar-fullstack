@@ -58,13 +58,14 @@ export function AppLayout() {
       return { eyebrow: "定时任务", title: "定时任务" }
     }
     if (pathname.startsWith("/carbon-mgmt")) {
-      if (pathname === "/carbon-mgmt/scope1-mobile") return { eyebrow: "碳排放管理", title: "[Scope1] 移动源燃烧" }
-      if (pathname === "/carbon-mgmt/scope1-stationary") return { eyebrow: "碳排放管理", title: "[Scope1] 固定源燃烧" }
-      if (pathname === "/carbon-mgmt/scope1-refrigerant") return { eyebrow: "碳排放管理", title: "[Scope1] 制冷剂逸散" }
-      if (pathname === "/carbon-mgmt/scope2-bill") return { eyebrow: "碳排放管理", title: "[Scope2] 电费账单" }
-      if (pathname === "/carbon-mgmt/scope3-waste") return { eyebrow: "碳排放管理", title: "[Scope3] 废弃物处理" }
-      if (pathname === "/carbon-mgmt/scope3-transport") return { eyebrow: "碳排放管理", title: "[Scope3] 外购运输" }
+      if (pathname === "/carbon-mgmt/scope1-mobile") return { eyebrow: "碳排放管理", title: "[范围1] 移动源燃烧" }
+      if (pathname === "/carbon-mgmt/scope1-stationary") return { eyebrow: "碳排放管理", title: "[范围1] 固定源燃烧" }
+      if (pathname === "/carbon-mgmt/scope1-refrigerant") return { eyebrow: "碳排放管理", title: "[范围1] 制冷剂逸散" }
+      if (pathname === "/carbon-mgmt/scope2-bill") return { eyebrow: "碳排放管理", title: "[范围2] 电费账单" }
+      if (pathname === "/carbon-mgmt/scope3-waste") return { eyebrow: "碳排放管理", title: "[范围3] 废弃物处理" }
+      if (pathname === "/carbon-mgmt/scope3-transport") return { eyebrow: "碳排放管理", title: "[范围3] 外购运输" }
       if (pathname === "/carbon-mgmt/factors") return { eyebrow: "碳排放管理", title: "排放因子库" }
+      if (pathname === "/carbon-mgmt/calculation-factors") return { eyebrow: "碳排放管理", title: "计算因子库" }
       if (pathname === "/carbon-mgmt/iot") return { eyebrow: "碳排放管理", title: "IoT时序数据" }
       if (pathname === "/carbon-mgmt/audit") return { eyebrow: "碳排放管理", title: "审核操作日志" }
       return { eyebrow: "碳排放管理", title: "碳排放管理" }

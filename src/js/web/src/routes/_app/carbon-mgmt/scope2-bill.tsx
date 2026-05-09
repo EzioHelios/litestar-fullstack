@@ -148,7 +148,7 @@ function Scope2BillPage() {
 
   return (
     <PageContainer className="flex-1 space-y-6">
-      <PageHeader eyebrow="碳排放管理" title="[Scope2] 电费账单" description="电费账单填报、审核流转与记录管理。" />
+      <PageHeader eyebrow="碳排放管理" title="[范围2] 电费账单" description="电费账单填报、审核流转与记录管理。" />
 
       <PageSection>
         <Card>
