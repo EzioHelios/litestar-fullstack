@@ -16,6 +16,12 @@ COMPOSE_APP := $(COMPOSE_DIR)/docker-compose.yml
 # Define project name for docker-compose
 COMPOSE_PROJECT_NAME := fullstack-spa
 
+# Local bare-metal development configuration.
+DEV_API_PORT ?= $(shell awk -F= '/^LITESTAR_PORT=/{print $$2; exit}' .env 2>/dev/null || echo 18100)
+DEV_WEB_PORT ?= $(shell awk -F= '/^VITE_PORT=/{print $$2; exit}' .env 2>/dev/null || echo 18101)
+DEV_API_URL ?= http://localhost:$(DEV_API_PORT)
+DEV_WEB_HOST ?= 127.0.0.1
+
 # Define colors and formatting
 BLUE := $(shell printf "\033[1;34m")
 GREEN := $(shell printf "\033[1;32m")
@@ -242,6 +248,37 @@ build-emails:                                      ## Build React email template
 	@echo "${INFO} Building email templates... 📧"
 	@cd src/js/templates && (bun install --frozen-lockfile 2>/dev/null || bun install) && bun run build
 	@echo "${OK} Email templates built to src/py/app/server/static/email/"
+
+
+# =============================================================================
+# Bare-Metal Development
+# =============================================================================
+
+.PHONY: dev-api
+dev-api:                                           ## Run backend API locally
+	@echo "${INFO} Starting backend: $(DEV_API_URL)"
+	@uv run app run
+
+.PHONY: dev-web
+dev-web:                                           ## Run Vite frontend locally
+	@echo "${INFO} Starting frontend: http://$(DEV_WEB_HOST):$(DEV_WEB_PORT)"
+	@cd src/js/web && APP_URL=$(DEV_API_URL) VITE_API_URL=$(DEV_API_URL) VITE_PORT=$(DEV_WEB_PORT) bun run dev --host $(DEV_WEB_HOST)
+
+.PHONY: dev
+dev:                                               ## Run backend and frontend locally
+	@echo "${INFO} Starting backend and frontend..."
+	@$(MAKE) dev-api & api_pid=$$!
+	@$(MAKE) dev-web & web_pid=$$!
+	@trap 'kill $$api_pid $$web_pid 2>/dev/null || true' INT TERM EXIT
+	@wait
+
+.PHONY: db-upgrade
+db-upgrade:                                        ## Run database migrations locally
+	@uv run app database upgrade --no-prompt
+
+.PHONY: create-root-user
+create-root-user:                                  ## Create local root@example.com development user
+	@uv run python tools/dev/create_root_user.py
 
 
 # =============================================================================
