@@ -92,3 +92,19 @@ class SystemController(Controller):
             OAuth configuration indicating which providers are enabled.
         """
         return s.OAuthConfig(google_enabled=settings.google_oauth_enabled, github_enabled=settings.github_oauth_enabled)
+
+    @get(
+        operation_id="PublicAppConfig",
+        name="system:public-config",
+        path="/api/config/public",
+        summary="Get Public Application Configuration",
+        exclude_from_auth=True,
+        security=[],
+    )
+    async def get_public_config(self, settings: AppSettings) -> s.PublicAppConfig:
+        """Get public display configuration for frontend."""
+        return s.PublicAppConfig(
+            display_name=settings.DISPLAY_NAME,
+            short_name=settings.SHORT_NAME,
+            description=settings.DESCRIPTION,
+        )

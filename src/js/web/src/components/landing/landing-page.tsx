@@ -3,10 +3,12 @@ import { ArrowRight, Moon, Sun } from "lucide-react"
 import { Icons } from "@/components/icons"
 import { Button } from "@/components/ui/button"
 import { RetroGrid } from "@/components/ui/retro-grid"
+import { usePublicConfig } from "@/hooks/use-public-config"
 import { useTheme } from "@/lib/theme-context"
 
 export function LandingPage() {
   const { toggleTheme, theme } = useTheme()
+  const { config } = usePublicConfig()
 
   return (
     <div className="relative flex min-h-screen w-full">
@@ -16,11 +18,11 @@ export function LandingPage() {
         <Link to="/" className="relative z-20">
           <div className="flex items-center font-medium text-lg">
             <Icons.logo className="mr-2 h-6 w-6" />
-            碳数据管理系统
+            {config.displayName}
           </div>
         </Link>
         <div className="relative z-20 mt-auto">
-          <p className="text-lg font-medium leading-relaxed">试点仓库碳数据收集与管理系统，支持 Scope 1/2/3 碳排放数据的采集、审核与统计分析。</p>
+          <p className="text-lg font-medium leading-relaxed">{config.description}</p>
           <div className="mt-4 flex items-center gap-4">
             <div className="flex -space-x-1">
               <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 ring-2 ring-brand-navy backdrop-blur-sm">
@@ -59,9 +61,9 @@ export function LandingPage() {
         <main className="flex flex-1 flex-col items-center justify-center px-4 pb-16">
           <Icons.logoBrand className="h-16 w-16" />
 
-          <h1 className="mt-8 font-heading text-4xl font-bold tracking-tight text-foreground sm:text-5xl">碳数据管理系统</h1>
+          <h1 className="mt-8 font-heading text-4xl font-bold tracking-tight text-foreground sm:text-5xl">{config.displayName}</h1>
 
-          <p className="mt-4 max-w-md text-center text-lg text-muted-foreground">试点仓库碳数据收集与管理系统</p>
+          <p className="mt-4 max-w-md text-center text-lg text-muted-foreground">{config.description}</p>
 
           <div className="mt-10 flex gap-4">
             <Button asChild size="lg">
@@ -77,7 +79,9 @@ export function LandingPage() {
         </main>
 
         {/* Footer */}
-        <footer className="py-6 text-center text-sm text-muted-foreground">© {new Date().getFullYear()} 碳数据管理系统</footer>
+        <footer className="py-6 text-center text-sm text-muted-foreground">
+          © {new Date().getFullYear()} {config.displayName}
+        </footer>
       </div>
     </div>
   )

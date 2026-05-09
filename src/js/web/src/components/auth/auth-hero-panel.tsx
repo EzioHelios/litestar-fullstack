@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router"
 import { Icons } from "@/components/icons"
 import { RetroGrid } from "@/components/ui/retro-grid"
+import { usePublicConfig } from "@/hooks/use-public-config"
 
 interface AuthHeroPanelProps {
   title?: string
@@ -8,25 +9,25 @@ interface AuthHeroPanelProps {
   showTestimonial?: boolean
 }
 
-export function AuthHeroPanel({
-  title = "碳数据管理系统",
-  description = "试点仓库碳数据收集与管理系统，支持 Scope 1/2/3 碳排放数据的采集、审核与统计分析。",
-  showTestimonial = true,
-}: AuthHeroPanelProps) {
+export function AuthHeroPanel({ title, description, showTestimonial = true }: AuthHeroPanelProps) {
+  const { config } = usePublicConfig()
+  const panelTitle = title ?? config.displayName
+  const panelDescription = description ?? config.description
+
   return (
     <div className="relative hidden min-h-screen w-1/2 max-w-2xl flex-col bg-brand-navy p-10 text-white lg:flex">
       <RetroGrid />
       <Link to="/" className="relative z-20">
         <div className="flex items-center font-medium text-lg">
           <Icons.logo className="mr-2 h-6 w-6" />
-          {title}
+          {panelTitle}
         </div>
       </Link>
 
       <div className="relative z-20 mt-auto">
         {showTestimonial ? (
           <div className="space-y-4">
-            <p className="text-lg font-medium leading-relaxed">{description}</p>
+            <p className="text-lg font-medium leading-relaxed">{panelDescription}</p>
             <div className="flex items-center gap-4">
               <div className="flex -space-x-1">
                 <div className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 ring-2 ring-brand-navy backdrop-blur-sm">
@@ -48,7 +49,7 @@ export function AuthHeroPanel({
             </div>
           </div>
         ) : (
-          <p className="text-lg font-medium leading-relaxed text-white/70">{description}</p>
+          <p className="text-lg font-medium leading-relaxed text-white/70">{panelDescription}</p>
         )}
       </div>
     </div>

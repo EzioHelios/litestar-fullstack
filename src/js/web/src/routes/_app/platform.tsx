@@ -1,5 +1,5 @@
 /**
- * 祥泰仓库数据管理平台 - 首页（对应截图）
+ * 数据管理平台 - 首页
  * 结构：快捷操作（图标宫格） + 最近动作
  */
 import { createFileRoute, Link } from "@tanstack/react-router"
@@ -23,6 +23,7 @@ import {
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { PageContainer, PageHeader, PageSection } from "@/components/ui/page-layout"
+import { usePublicConfig } from "@/hooks/use-public-config"
 import { cn } from "@/lib/utils"
 
 export const Route = createFileRoute("/_app/platform")({
@@ -49,9 +50,11 @@ const quickActions = [
 ] as const
 
 function PlatformHome() {
+  const { config } = usePublicConfig()
+
   return (
     <PageContainer className="flex-1 space-y-6">
-      <PageHeader eyebrow="首页" title="祥泰仓库数据管理平台" description="快捷操作与最近动作（UI 结构对齐 xtck_deploy 截图）" />
+      <PageHeader eyebrow="首页" title={config.displayName} description={config.description} />
 
       <PageSection>
         <Card>
@@ -89,4 +92,3 @@ function PlatformHome() {
     </PageContainer>
   )
 }
-

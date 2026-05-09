@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { PageContainer, PageHeader } from "@/components/ui/page-layout"
+import { usePublicConfig } from "@/hooks/use-public-config"
 
 export const Route = createFileRoute("/_public/about")({
   component: AboutPage,
@@ -38,6 +39,7 @@ const features = [
 ]
 
 function AboutPage() {
+  const { config } = usePublicConfig()
   const [easterEggActive, setEasterEggActive] = useState(false)
   const [konamiIndex, setKonamiIndex] = useState(0)
   const containerRef = useRef<HTMLDivElement>(null)
@@ -178,7 +180,7 @@ function AboutPage() {
           </Button>
         </div>
 
-        <PageHeader eyebrow="关于" title="试点仓库碳数据收集与管理系统" description="支持 Scope 1/2/3 碳排放数据的采集、审核与统计分析。" />
+        <PageHeader eyebrow="关于" title={config.displayName} description={config.description} />
 
         {/* Features grid */}
         <motion.div

@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { useRouterState } from "@tanstack/react-router"
-import { Activity, AlarmClock, Building2, Camera, Database, HardDrive, Home, KeyRound, MapPinned, PlugZap, ShieldCheck, Truck, Users, Video, Warehouse } from "lucide-react"
+import { AlarmClock, Database, Home, ShieldCheck, Users } from "lucide-react"
 import type * as React from "react"
 import { useEffect, useMemo } from "react"
 import { NavMain } from "@/components/nav-main"
@@ -9,12 +9,14 @@ import { NavUser } from "@/components/nav-user"
 import { TeamSwitcher } from "@/components/team-switcher"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@/components/ui/sidebar"
+import { usePublicConfig } from "@/hooks/use-public-config"
 import { useAuthStore } from "@/lib/auth"
 import { listTeams, type Team } from "@/lib/generated/api"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { teams, currentTeam, setTeams, setCurrentTeam, user, isAuthenticated } = useAuthStore()
   const pathname = useRouterState({ select: (s) => s.location.pathname })
+  const { config } = usePublicConfig()
 
   const {
     data: teamsData = [],
@@ -133,10 +135,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarHeader>
         <div className="flex items-center gap-2 px-2 py-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/15 text-primary">
-            <span className="text-sm font-semibold">XT</span>
+            <span className="text-sm font-semibold">{config.shortName}</span>
           </div>
           <div className="min-w-0 group-data-[collapsible=icon]:hidden">
-            <div className="truncate text-sm font-semibold">祥泰仓库数据管理平台</div>
+            <div className="truncate text-sm font-semibold">{config.displayName}</div>
             <div className="truncate text-xs text-muted-foreground">数据管理</div>
           </div>
         </div>

@@ -1,10 +1,12 @@
-import { useRouter, Link } from "@tanstack/react-router"
+import { Link, useRouter } from "@tanstack/react-router"
+import { usePublicConfig } from "@/hooks/use-public-config"
 import { validateRedirectUrl } from "@/lib/redirect-utils"
 
 import { UserLoginForm } from "./user-login-form"
 
 export function AuthForm() {
   const router = useRouter()
+  const { config } = usePublicConfig()
 
   // Get redirect param from URL search params
   const searchParams = new URLSearchParams(router.state.location.searchStr)
@@ -16,10 +18,10 @@ export function AuthForm() {
       <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-96">
         <div className="flex flex-col items-center space-y-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/15 text-primary">
-            <span className="text-lg font-bold">XT</span>
+            <span className="text-lg font-bold">{config.shortName}</span>
           </div>
           <div className="text-center">
-            <h1 className="font-semibold text-xl tracking-tight">祥泰仓库数据管理平台</h1>
+            <h1 className="font-semibold text-xl tracking-tight">{config.displayName}</h1>
             <p className="mt-1 text-muted-foreground text-sm">请输入账号密码登录系统</p>
           </div>
         </div>

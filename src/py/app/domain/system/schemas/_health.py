@@ -19,3 +19,11 @@ class OAuthConfig(CamelizedBaseStruct, kw_only=True):
 
     google_enabled: bool = False
     github_enabled: bool = False
+
+
+class PublicAppConfig(CamelizedBaseStruct, kw_only=True):
+    """Public application configuration for frontend display."""
+
+    display_name: str
+    short_name: str
+    description: str

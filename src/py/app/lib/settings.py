@@ -362,6 +362,14 @@ class AppSettings:
 
     NAME: str = field(default_factory=lambda: "Litestar Fullstack Template")
     """Application name."""
+    DISPLAY_NAME: str = field(default_factory=get_env("APP_DISPLAY_NAME", "碳数据收集与管理系统"))
+    """User-facing application display name."""
+    SHORT_NAME: str = field(default_factory=get_env("APP_SHORT_NAME", "CD"))
+    """Short user-facing application name."""
+    DESCRIPTION: str = field(
+        default_factory=get_env("APP_DESCRIPTION", "支持 Scope 1/2/3 碳排放数据的采集、审核与统计分析。")
+    )
+    """User-facing application description."""
     VERSION: str = field(default=f"v{current_version}")
     """Current application"""
     CONTACT_NAME: str = field(default="Admin")

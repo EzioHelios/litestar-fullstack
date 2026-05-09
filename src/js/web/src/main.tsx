@@ -4,6 +4,7 @@ import { createRouter, RouterProvider } from "@tanstack/react-router"
 import React from "react"
 import ReactDOM from "react-dom/client"
 import { ErrorBoundary } from "@/components/error-boundary"
+import { usePublicConfig } from "@/hooks/use-public-config"
 import { client } from "@/lib/generated/api/client.gen"
 import { ThemeProvider } from "@/lib/theme-context"
 
@@ -137,6 +138,16 @@ declare module "@tanstack/react-router" {
   }
 }
 
+function DocumentTitle() {
+  const { config } = usePublicConfig()
+
+  React.useEffect(() => {
+    document.title = config.displayName
+  }, [config.displayName])
+
+  return null
+}
+
 // Render the app
 const rootElement = document.getElementById("root")
 if (rootElement && !rootElement.innerHTML) {
@@ -145,6 +156,7 @@ if (rootElement && !rootElement.innerHTML) {
     <React.StrictMode>
       <ThemeProvider>
         <QueryClientProvider client={queryClient}>
+          <DocumentTitle />
           <RouterProvider router={router} />
           <ReactQueryDevtools />
         </QueryClientProvider>
