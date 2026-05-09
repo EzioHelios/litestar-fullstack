@@ -1,64 +1,163 @@
-<!-- markdownlint-disable -->
-<p align="center">
-  <img src="https://raw.githubusercontent.com/litestar-org/branding/1dc4635b192d29d864fcee6f3f73ea0ff6fecf10/assets/Branding%20-%20SVG%20-%20Transparent/Fullstack%20-%20Banner%20-%20Inline%20-%20Light.svg#gh-light-mode-only" alt="Litestar Logo - Light" width="100%" height="auto" />
-  <img src="https://raw.githubusercontent.com/litestar-org/branding/1dc4635b192d29d864fcee6f3f73ea0ff6fecf10/assets/Branding%20-%20SVG%20-%20Transparent/Fullstack%20-%20Banner%20-%20Inline%20-%20Dark.svg#gh-dark-mode-only" alt="Litestar Logo - Dark" width="100%" height="auto" />
-</p>
-<!-- markdownlint-restore -->
+# 祥泰仓库数据管理平台
 
-<div align="center">
-<!-- prettier-ignore-start -->
+这是一个基于 Litestar + React 的仓库碳数据收集与管理系统。项目从 Litestar Fullstack 模板演进而来，但当前仓库已经按业务项目重新整理：后端提供 API、认证、权限、碳排放与仓库数据管理能力，前端使用 Vite + React + TanStack Router，开发阶段推荐在本机裸跑前后端，Docker 只负责基础设施。
 
-| Project   |     | Status                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
-| --------- | :-- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| CI/CD     |     | [![Tests and Linting](https://github.com/litestar-org/litestar-fullstack/actions/workflows/ci.yaml/badge.svg)](https://github.com/litestar-org/litestar-fullstack/actions/workflows/ci.yaml)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| Quality   |     | [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=litestar-org_litestar-fullstack&metric=coverage)](https://sonarcloud.io/summary/new_code?id=litestar-org_litestar) [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=litestar-org_litestar-fullstack&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=litestar-org_litestar) [![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=litestar-org_litestar-fullstack&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=litestar-org_litestar) [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=litestar-org_litestar-fullstack&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=litestar-org_litestar) [![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=litestar-org_litestar-fullstack&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=litestar-org_litestar)                                                                                                                                                                                                                     |
-| Community |     | [![Reddit](https://img.shields.io/reddit/subreddit-subscribers/litestarapi?label=r%2FLitestar&logo=reddit&labelColor=202235&color=edb641&logoColor=edb641)](https://reddit.com/r/litestarapi) [![Discord](https://img.shields.io/discord/919193495116337154?labelColor=202235&color=edb641&label=chat%20on%20discord&logo=discord&logoColor=edb641)](https://discord.gg/litestar) [![Matrix](https://img.shields.io/badge/chat%20on%20Matrix-bridged-202235?labelColor=202235&color=edb641&logo=matrix&logoColor=edb641)](https://matrix.to/#/#litestar:matrix.org) [![Medium](https://img.shields.io/badge/Medium-202235?labelColor=202235&color=edb641&logo=medium&logoColor=edb641)](https://blog.litestar.dev) [![Twitter](https://img.shields.io/twitter/follow/LitestarAPI?labelColor=202235&color=edb641&logo=twitter&logoColor=edb641&style=flat)](https://twitter.com/LitestarAPI) [![Blog](https://img.shields.io/badge/Blog-litestar.dev-202235?logo=blogger&labelColor=202235&color=edb641&logoColor=edb641)](https://blog.litestar.dev)                                                                                                                                                                                                |
-| Meta      |     | [![Litestar Project](https://img.shields.io/badge/Litestar%20Org-%E2%AD%90%20Litestar-202235.svg?logo=python&labelColor=202235&color=edb641&logoColor=edb641)](https://github.com/litestar-org/litestar) [![types - Mypy](https://img.shields.io/badge/types-Mypy-202235.svg?logo=python&labelColor=202235&color=edb641&logoColor=edb641)](https://github.com/python/mypy) [![License - MIT](https://img.shields.io/badge/license-MIT-202235.svg?logo=python&labelColor=202235&color=edb641&logoColor=edb641)](https://spdx.org/licenses/) [![Litestar Sponsors](https://img.shields.io/badge/Sponsor-%E2%9D%A4-%23edb641.svg?&logo=github&logoColor=edb641&labelColor=202235)](https://github.com/sponsors/litestar-org) [![linting - Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/charliermarsh/ruff/main/assets/badge/v2.json&labelColor=202235)](https://github.com/astral-sh/ruff) [![code style - Black](https://img.shields.io/badge/code%20style-black-000000.svg?logo=python&labelColor=202235&logoColor=edb641)](https://github.com/psf/black) [![All Contributors](https://img.shields.io/github/all-contributors/litestar-org/litestar?labelColor=202235&color=edb641&logoColor=edb641)](#contributors-) |
+## 技术栈
 
-<!-- prettier-ignore-end -->
-</div>
+- 后端：Litestar、SQLAlchemy 2.0、Advanced Alchemy、Alembic、SAQ
+- 前端：React、Vite、TanStack Router、TanStack Query、Tailwind CSS
+- 数据：PostgreSQL、Redis/Valkey
+- 开发工具：uv、bun、Ruff、Biome、Pyright、mypy
+- 本地基础设施：Docker Compose 管理 Postgres、Redis、Mailpit、RustFS
 
-# Litestar Fullstack Reference Application
+## 本地端口
 
-This is a reference application that you can use to get your next Litestar application running quickly.
+项目使用一组连续端口，避免和其他本机服务冲突：
 
-It contains most of the boilerplate required for a production web API with features like:
+| 服务 | 地址 |
+| --- | --- |
+| 后端 API | `http://localhost:18100` |
+| 前端 Vite | `http://127.0.0.1:18101` |
+| PostgreSQL | `localhost:18102` |
+| Redis/Valkey | `localhost:18103` |
+| Mailpit UI | `http://localhost:18104` |
+| SMTP | `localhost:18105` |
+| S3 API | `http://localhost:18106` |
+| S3 Console | `http://localhost:18107` |
 
-- Latest Litestar configured with best practices
-- Integration with [SQLAlchemy 2.0](https://www.sqlalchemy.org/), [SAQ (Simple Asynchronous Queue)](https://saq-py.readthedocs.io/en/latest/), [Structlog](https://www.structlog.org/en/stable/), and [Granian](https://github.com/emmett-framework/granian)
-- Frontend integrated with Vite in SPA mode and React Email templates compiled to static HTML
-- JWT auth with refresh tokens, MFA, OAuth, and admin surfaces
-- Multi-stage Docker build using a minimal Python 3.13 runtime image (including a distroless variant)
-- Team and role management with service/repository patterns and Advanced Alchemy filters
+## 快速启动
 
-Take what you need and adapt it to your own projects
+首次安装：
 
-## Quick Start
-
-To quickly get a development environment running, run the following:
-
-```shell
+```bash
 make install
-. .venv/bin/activate
 ```
 
-### Local Development
+启动基础设施、迁移数据库、创建开发账号：
 
 ```bash
-cp .env.local.example .env
-. .venv/bin/activate
 make start-infra
-app database upgrade
-app run
+make db-upgrade
+make create-root-user
 ```
 
-Generated frontend assets, React Email HTML, TanStack route trees, and OpenAPI TypeScript clients are not committed.
-Run `make types`, `make build-emails`, and `make build-assets` before packaging or when those generated outputs are needed locally.
-
-### Docker
-
-If you want to run the entire development environment containerized, you can run the following:
+裸跑前后端：
 
 ```bash
-docker compose up
+make dev
 ```
+
+也可以拆成两个终端：
+
+```bash
+make dev-api
+make dev-web
+```
+
+打开前端：
+
+```text
+http://127.0.0.1:18101/login
+```
+
+开发账号：
+
+```text
+root@example.com
+12345678
+```
+
+## 常用命令
+
+```bash
+make help              # 查看所有命令
+make start-infra       # 启动本地基础设施
+make stop-infra        # 停止本地基础设施
+make infra-logs        # 查看基础设施日志
+make db-upgrade        # 执行 Alembic 迁移
+make create-root-user  # 创建本地 root 用户
+make dev-api           # 启动后端
+make dev-web           # 启动前端
+make dev               # 同时启动前后端
+make types             # 导出 OpenAPI 并生成 TS client
+make build-emails      # 构建邮件模板 HTML
+make build-assets      # 构建前端静态资源
+make ruff              # Python lint/format
+make biome             # 前端 lint/format
+make test              # 后端测试
+```
+
+## 生成物策略
+
+以下内容不提交到 Git，由本地或 CI 生成：
+
+- `src/js/web/src/lib/generated/`
+- `src/js/web/src/routeTree.gen.ts`
+- `src/py/app/server/static/email/`
+- `src/py/app/server/static/web/`
+- 前端 `node_modules`
+- 本地 `.env`
+
+需要生成时运行：
+
+```bash
+make types
+make build-emails
+make build-assets
+```
+
+## 旧库数据导入
+
+仓库内保留了迁移工具：
+
+```text
+tools/legacy_migration/
+tools/diagnostics/db/
+```
+
+旧库 SQL dump 不提交到 Git。当前本机已验证过的 dump 路径是：
+
+```text
+/Users/eziohelios/Dev/xtck_deploy/db_xtck_20260203.sql
+```
+
+推荐流程是先把 dump 恢复到临时旧库，再通过迁移脚本导入当前开发库：
+
+```bash
+docker exec fullstack-spa-db-1 psql -U app -d postgres -c "DROP DATABASE IF EXISTS legacy_xtck;"
+docker exec fullstack-spa-db-1 psql -U app -d postgres -c "CREATE DATABASE legacy_xtck;"
+cat /path/to/db_xtck_20260203.sql | docker exec -i fullstack-spa-db-1 psql -U app -d legacy_xtck
+
+OLD_DB_URL='postgresql+psycopg://app:app@localhost:18102/legacy_xtck' \
+NEW_DB_URL='postgresql+psycopg://app:app@localhost:18102/app' \
+uv run python tools/legacy_migration/migrate_all.py
+```
+
+注意：旧库部分表使用字符串业务主键，例如 `P1/P2` 作为监控区域编号，而新库使用 bigint 主键。直接拷贝时可能需要额外做 ID 映射。
+
+## 目录结构
+
+```text
+src/
+├── py/
+│   ├── app/          # Litestar 后端应用
+│   └── tests/        # 后端测试
+└── js/
+    ├── web/          # React SPA
+    └── templates/    # React Email 模板
+
+tools/
+├── legacy_migration/ # 旧库迁移工具
+├── diagnostics/db/   # 数据库诊断脚本
+└── dev/              # 本地开发辅助脚本
+```
+
+## Git 分支
+
+当前项目主开发分支是：
+
+```text
+project
+```
+
+远程 `main` 保留 fork 来源历史；本项目后续开发建议基于 `project`。
